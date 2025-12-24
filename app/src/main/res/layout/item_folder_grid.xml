@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 文件夹宫格列表项布局 - Netflix风格 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp"
+    android:background="@drawable/folder_item_selector"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center">
+
+    <!-- 文件夹封面图片 - 使用自定义正方形ImageView -->
+    <com.example.flowalbum.SquareImageView
+        android:id="@+id/imageFolderCover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:background="@color/control_background"
+        android:contentDescription="@string/folder_name" />
+
+    <!-- 文件夹名称 -->
+    <TextView
+        android:id="@+id/textFolderName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/folder_name"
+        android:textSize="15sp"
+        android:textColor="@color/control_text"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp" />
+
+    <!-- 图片数量 -->
+    <TextView
+        android:id="@+id/textPhotoCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/photo_count"
+        android:textSize="13sp"
+        android:textColor="@color/netflix_green"
+        android:gravity="center"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="6dp" />
+
+</LinearLayout>

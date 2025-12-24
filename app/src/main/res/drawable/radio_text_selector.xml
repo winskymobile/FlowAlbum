@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 单选按钮文字颜色选择器 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中状态 - 深色文字（因为背景是亮绿色） -->
+    <item android:state_checked="true" android:color="@color/button_text_focused" />
+    
+    <!-- 正常状态 -->
+    <item android:color="@color/button_text" />
+</selector>

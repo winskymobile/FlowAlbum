@@ -1,0 +1,62 @@
+<resources>
+    <!-- Netflix风格主色调 -->
+    <color name="netflix_green">#24C084</color>
+    <color name="netflix_green_dark">#1A8A5E</color>
+    <color name="netflix_green_light">#3DD99C</color>
+    <color name="netflix_green_transparent">#8024C084</color>
+    
+    <color name="background_gradient_start">#000000</color>
+    <color name="background_gradient_end">#141414</color>
+    <color name="fastlane_background">#24C084</color>
+    <color name="search_opaque">#24C084</color>
+    <color name="selected_background">#24C084</color>
+    <color name="default_background">#1F1F1F</color>
+    
+    <!-- 幻灯片界面颜色 - Netflix风格 -->
+    <color name="slideshow_background">#0A0A0A</color>
+    <color name="overlay_background">#E6000000</color>
+    <color name="overlay_semi_transparent">#99000000</color>
+    
+    <!-- 控制栏颜色 - Netflix风格 -->
+    <color name="control_background">#E6000000</color>
+    <color name="control_text">#FFFFFF</color>
+    <color name="control_icon">#FFFFFF</color>
+    <color name="control_focused">#24C084</color>
+    
+    <!-- 指示器颜色 - Netflix风格 -->
+    <color name="indicator_active">#24C084</color>
+    <color name="indicator_inactive">#66FFFFFF</color>
+    <color name="indicator_background">#99000000</color>
+    
+    <!-- 设置对话框颜色 - Netflix风格 -->
+    <color name="dialog_background">#E6141414</color>
+    <color name="dialog_title">#FFFFFF</color>
+    <color name="dialog_text">#E5E5E5</color>
+    <color name="dialog_item_focused">#8024C084</color>
+    <color name="dialog_divider">#333333</color>
+    
+    <!-- 按钮颜色 - Netflix风格 -->
+    <color name="button_normal">#2A2A2A</color>
+    <color name="button_focused">#24C084</color>
+    <color name="button_pressed">#1A8A5E</color>
+    <color name="button_text">#FFFFFF</color>
+    <color name="button_text_focused">#000000</color>
+    
+    <!-- 状态颜色 -->
+    <color name="playing">#24C084</color>
+    <color name="paused">#FFA726</color>
+    <color name="error">#E53935</color>
+    
+    <!-- 半透明遮罩 -->
+    <color name="black_overlay">#80000000</color>
+    <color name="white_overlay">#4DFFFFFF</color>
+    
+    <!-- 主题色 - Netflix风格 -->
+    <color name="primary">#24C084</color>
+    <color name="primary_dark">#1A8A5E</color>
+    <color name="accent">#24C084</color>
+    
+    <!-- TV焦点边框 -->
+    <color name="tv_focus_border">#24C084</color>
+    <color name="tv_focus_glow">#4024C084</color>
+</resources>

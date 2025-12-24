@@ -1,0 +1,209 @@
+package com.example.flowalbum
+
+import android.content.Context
+import android.content.SharedPreferences
+
+/**
+ * 设置管理类
+ * 用于保存和读取用户的偏好设置
+ */
+class SettingsManager(context: Context) {
+
+    companion object {
+        // SharedPreferences文件名
+        private const val PREFS_NAME = "FlowAlbumSettings"
+        
+        // 设置键名
+        private const val KEY_INTERVAL = "slideshow_interval"
+        private const val KEY_ANIMATION_TYPE = "animation_type"
+        private const val KEY_RANDOM_ANIMATION = "random_animation"
+        private const val KEY_FOLDER_PATH = "folder_path"
+        private const val KEY_AUTO_PLAY = "auto_play"
+        private const val KEY_SHOW_INDICATOR = "show_indicator"
+        private const val KEY_HIGH_QUALITY = "high_quality_mode"
+        private const val KEY_HARDWARE_ACCEL = "hardware_acceleration"
+        private const val KEY_ANIMATION_ENABLED = "animation_enabled"
+        
+        // 默认值
+        const val DEFAULT_INTERVAL = 3000L // 默认3秒切换
+        const val MIN_INTERVAL = 1000L     // 最小1秒
+        const val MAX_INTERVAL = 30000L    // 最大30秒
+    }
+
+    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    /**
+     * 获取图片切换间隔（毫秒）
+     */
+    fun getInterval(): Long {
+        return prefs.getLong(KEY_INTERVAL, DEFAULT_INTERVAL)
+    }
+
+    /**
+     * 设置图片切换间隔（毫秒）
+     */
+    fun setInterval(interval: Long) {
+        // 确保间隔在有效范围内
+        val validInterval = interval.coerceIn(MIN_INTERVAL, MAX_INTERVAL)
+        prefs.edit().putLong(KEY_INTERVAL, validInterval).apply()
+    }
+
+    /**
+     * 获取动画类型
+     * 返回AnimationType的序号
+     */
+    fun getAnimationType(): Int {
+        return prefs.getInt(KEY_ANIMATION_TYPE, AnimationHelper.AnimationType.FADE.ordinal)
+    }
+
+    /**
+     * 设置动画类型
+     */
+    fun setAnimationType(type: AnimationHelper.AnimationType) {
+        prefs.edit().putInt(KEY_ANIMATION_TYPE, type.ordinal).apply()
+    }
+
+    /**
+     * 获取动画类型枚举
+     */
+    fun getAnimationTypeEnum(): AnimationHelper.AnimationType {
+        val ordinal = getAnimationType()
+        return AnimationHelper.AnimationType.values().getOrNull(ordinal) 
+            ?: AnimationHelper.AnimationType.FADE
+    }
+
+    /**
+     * 是否使用随机动画
+     */
+    fun isRandomAnimation(): Boolean {
+        return prefs.getBoolean(KEY_RANDOM_ANIMATION, false)
+    }
+
+    /**
+     * 设置是否使用随机动画
+     */
+    fun setRandomAnimation(random: Boolean) {
+        prefs.edit().putBoolean(KEY_RANDOM_ANIMATION, random).apply()
+    }
+
+    /**
+     * 获取图片文件夹路径
+     */
+    fun getFolderPath(): String? {
+        return prefs.getString(KEY_FOLDER_PATH, null)
+    }
+
+    /**
+     * 设置图片文件夹路径
+     */
+    fun setFolderPath(path: String?) {
+        prefs.edit().putString(KEY_FOLDER_PATH, path).apply()
+    }
+
+    /**
+     * 是否自动播放
+     */
+    fun isAutoPlay(): Boolean {
+        return prefs.getBoolean(KEY_AUTO_PLAY, true)
+    }
+
+    /**
+     * 设置是否自动播放
+     */
+    fun setAutoPlay(autoPlay: Boolean) {
+        prefs.edit().putBoolean(KEY_AUTO_PLAY, autoPlay).apply()
+    }
+
+    /**
+     * 是否显示指示器
+     */
+    fun isShowIndicator(): Boolean {
+        return prefs.getBoolean(KEY_SHOW_INDICATOR, false)
+    }
+
+    /**
+     * 设置是否显示指示器
+     */
+    fun setShowIndicator(show: Boolean) {
+        prefs.edit().putBoolean(KEY_SHOW_INDICATOR, show).apply()
+    }
+
+    /**
+     * 获取间隔秒数（用于UI显示）
+     */
+    fun getIntervalSeconds(): Int {
+        return (getInterval() / 1000).toInt()
+    }
+
+    /**
+     * 通过秒数设置间隔
+     */
+    fun setIntervalSeconds(seconds: Int) {
+        setInterval(seconds * 1000L)
+    }
+
+    /**
+     * 是否启用高质量模式
+     */
+    fun isHighQualityMode(): Boolean {
+        return prefs.getBoolean(KEY_HIGH_QUALITY, true)
+    }
+
+    /**
+     * 设置是否启用高质量模式
+     */
+    fun setHighQualityMode(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_HIGH_QUALITY, enabled).apply()
+    }
+
+    /**
+     * 是否启用硬件加速
+     */
+    fun isHardwareAcceleration(): Boolean {
+        return prefs.getBoolean(KEY_HARDWARE_ACCEL, true)
+    }
+
+    /**
+     * 设置是否启用硬件加速
+     */
+    fun setHardwareAcceleration(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_HARDWARE_ACCEL, enabled).apply()
+    }
+
+    /**
+     * 是否启用动画效果
+     */
+    fun isAnimationEnabled(): Boolean {
+        return prefs.getBoolean(KEY_ANIMATION_ENABLED, true)
+    }
+
+    /**
+     * 设置是否启用动画效果
+     */
+    fun setAnimationEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_ANIMATION_ENABLED, enabled).apply()
+    }
+
+    /**
+     * 重置所有设置为默认值
+     */
+    fun resetToDefaults() {
+        prefs.edit().clear().apply()
+    }
+
+    /**
+     * 导出设置为字符串（用于调试或备份）
+     */
+    fun exportSettings(): String {
+        return """
+            切换间隔: ${getIntervalSeconds()}秒
+            动画类型: ${getAnimationTypeEnum()}
+            随机动画: ${isRandomAnimation()}
+            自动播放: ${isAutoPlay()}
+            显示指示器: ${isShowIndicator()}
+            高质量模式: ${isHighQualityMode()}
+            硬件加速: ${isHardwareAcceleration()}
+            文件夹路径: ${getFolderPath() ?: "未设置"}
+        """.trimIndent()
+    }
+}

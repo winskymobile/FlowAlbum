@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">FlowAlbum</string>
+    <string name="browse_title">Videos by Your Company</string>
+    <string name="related_movies">Related Videos</string>
+    <string name="grid_view">Grid View</string>
+    <string name="error_fragment">Error Fragment</string>
+    <string name="personal_settings">Personal Settings</string>
+    <string name="watch_trailer_1">Watch trailer</string>
+    <string name="watch_trailer_2">FREE</string>
+    <string name="rent_1">Rent By Day</string>
+    <string name="rent_2">From $1.99</string>
+    <string name="buy_1">Buy and Own</string>
+    <string name="buy_2">AT $9.99</string>
+    <string name="movie">Movie</string>
+
+    <!-- Error messages -->
+    <string name="error_fragment_message">An error occurred</string>
+    <string name="dismiss_error">Dismiss</string>
+    
+    <!-- 幻灯片播放相关 -->
+    <string name="slideshow_title">图片幻灯片</string>
+    <string name="no_photos_found">未找到图片</string>
+    <string name="loading_photos">正在加载图片…</string>
+    <string name="permission_required">需要存储权限才能访问图片</string>
+    <string name="grant_permission">授予权限</string>
+    
+    <!-- 播放控制 -->
+    <string name="play">播放</string>
+    <string name="pause">暂停</string>
+    <string name="previous">上一张</string>
+    <string name="next">下一张</string>
+    <string name="settings">设置</string>
+    
+    <!-- 设置界面 -->
+    <string name="settings_title">幻灯片设置</string>
+    <string name="interval_settings">切换间隔</string>
+    <string name="interval_seconds">%d 秒</string>
+    <string name="animation_settings">动画效果</string>
+    <string name="animation_type">动画类型</string>
+    <string name="enable_animation">启用动画效果</string>
+    <string name="random_animation">随机动画</string>
+    <string name="display_settings">显示设置</string>
+    <string name="show_indicator">显示指示器</string>
+    <string name="auto_play">自动播放</string>
+    <string name="high_quality_mode">真彩色模式</string>
+    <string name="high_quality_mode_desc">使用32位真彩色</string>
+    <string name="hardware_acceleration">硬件加速</string>
+    <string name="hardware_acceleration_desc">启用GPU加速以获得更流畅的显示</string>
+    
+    <!-- 动画类型 -->
+    <string name="animation_fade">淡入淡出</string>
+    <string name="animation_slide_left">左滑</string>
+    <string name="animation_slide_right">右滑</string>
+    <string name="animation_slide_up">上滑</string>
+    <string name="animation_slide_down">下滑</string>
+    <string name="animation_zoom_in">放大</string>
+    <string name="animation_zoom_out">缩小</string>
+    <string name="animation_rotate">旋转</string>
+    <string name="animation_random">随机效果</string>
+    <string name="animation_none">无动画</string>
+    
+    <!-- 按钮 -->
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="apply">应用</string>
+    <string name="reset">重置</string>
+    <string name="close">关闭</string>
+    
+    <!-- 提示信息 -->
+    <string name="photo_info">第 %1$d / %2$d 张</string>
+    <string name="photo_info_with_settings">第 %1$d / %2$d 张 | %3$d 秒 | %4$s</string>
+    <string name="loading">加载中…</string>
+    <string name="error_loading_photo">加载图片失败</string>
+    
+    <!-- 遥控器提示 -->
+    <string name="hint_dpad_left_right">菜单键：设置 | 上下键：显示/隐藏控制栏</string>
+    <string name="hint_menu_key">菜单键：打开设置</string>
+    <string name="hint_back_key">返回键：退出</string>
+    
+    <!-- 文件夹浏览 -->
+    <string name="browse_folders">浏览文件夹</string>
+    <string name="select_folder">选择文件夹</string>
+    <string name="select_photos">选择图片</string>
+    <string name="all_photos">播放所有图片</string>
+    <string name="local_photos">本地图片</string>
+    <string name="external_devices">外置设备</string>
+    <string name="refresh_folders">刷新列表</string>
+    <string name="refreshing_folders">正在刷新文件夹列表…</string>
+    <string name="loading_local_folders">正在加载本地文件夹…</string>
+    <string name="loading_external_devices">正在加载外置设备…</string>
+    <string name="no_external_devices">未找到外置设备</string>
+    <string name="selected_photos">已选择 %d 张图片</string>
+    <string name="no_folders_found">未找到文件夹</string>
+    <string name="folder_name">文件夹名称</string>
+    <string name="photo_count">%d 张图片</string>
+    <string name="start_slideshow">开始播放</string>
+    <string name="select_all">全选</string>
+    <string name="deselect_all">取消全选</string>
+    <string name="back_to_folders">返回文件夹列表</string>
+    
+    <!-- 关于界面 -->
+    <string name="about">关于</string>
+    <string name="about_app">关于应用</string>
+    <string name="app_version">版本号</string>
+    <string name="version_info">版本 %s</string>
+    <string name="copyright">版权信息</string>
+    <string name="copyright_info">© 2025 Vincent.J 保留所有权利</string>
+    <string name="check_update">检测更新</string>
+    <string name="checking_update">正在检测更新…</string>
+    <string name="no_update">更新功能正在开发中……</string>
+    <string name="update_available">发现新版本</string>
+</resources>

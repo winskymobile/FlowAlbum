@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 文件夹列表项布局 - Netflix风格 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@drawable/folder_item_selector"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:layout_margin="4dp">
+
+    <!-- 文件夹封面图片 -->
+    <ImageView
+        android:id="@+id/imageFolderCover"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/folder_name"
+        android:background="@color/control_background" />
+
+    <!-- 文件夹信息 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_gravity="center_vertical">
+
+        <!-- 文件夹名称 -->
+        <TextView
+            android:id="@+id/textFolderName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/folder_name"
+            android:textSize="18sp"
+            android:textColor="@color/control_text"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- 图片数量 -->
+        <TextView
+            android:id="@+id/textPhotoCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/photo_count"
+            android:textSize="14sp"
+            android:textColor="@color/control_text"
+            android:alpha="0.7"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 幻灯片播放主界面布局 -->
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/slideshow_background"
+    android:keepScreenOn="true">
+
+    <!-- 当前显示的图片 -->
+    <ImageView
+        android:id="@+id/imageViewCurrent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="false"
+        android:contentDescription="@string/slideshow_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 下一张图片（用于动画切换） -->
+    <ImageView
+        android:id="@+id/imageViewNext"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="false"
+        android:visibility="gone"
+        android:contentDescription="@string/next"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 加载进度指示器 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 加载提示文本 -->
+    <TextView
+        android:id="@+id/textLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading_photos"
+        android:textColor="@color/control_text"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 无图片提示 -->
+    <TextView
+        android:id="@+id/textNoPhotos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_photos_found"
+        android:textColor="@color/control_text"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 底部控制栏容器 -->
+    <LinearLayout
+        android:id="@+id/layoutControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/control_background"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 图片信息文本 -->
+        <TextView
+            android:id="@+id/textPhotoInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/photo_info"
+            android:textColor="@color/control_text"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 控制按钮行 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center">
+
+            <!-- 上一张按钮 -->
+            <Button
+                android:id="@+id/btnPrevious"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:text="@string/previous"
+                android:textColor="@drawable/button_text_selector"
+                android:background="@drawable/button_selector"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusRight="@id/btnPlayPause"
+                android:nextFocusLeft="@id/btnSettings" />
+
+            <!-- 播放/暂停按钮 -->
+            <Button
+                android:id="@+id/btnPlayPause"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:text="@string/pause"
+                android:textColor="@drawable/button_text_selector"
+                android:background="@drawable/button_selector"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusRight="@id/btnNext"
+                android:nextFocusLeft="@id/btnPrevious" />
+
+            <!-- 下一张按钮 -->
+            <Button
+                android:id="@+id/btnNext"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:text="@string/next"
+                android:textColor="@drawable/button_text_selector"
+                android:background="@drawable/button_selector"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusRight="@id/btnSettings"
+                android:nextFocusLeft="@id/btnPlayPause" />
+
+            <!-- 设置按钮 -->
+            <Button
+                android:id="@+id/btnSettings"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:text="@string/settings"
+                android:textColor="@drawable/button_text_selector"
+                android:background="@drawable/button_selector"
+                android:layout_marginStart="12dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusRight="@id/btnPrevious"
+                android:nextFocusLeft="@id/btnNext" />
+        </LinearLayout>
+
+        <!-- 遥控器提示 -->
+        <TextView
+            android:id="@+id/textHints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_dpad_left_right"
+            android:textColor="@color/control_text"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:alpha="0.7" />
+    </LinearLayout>
+
+    <!-- 图片位置指示器 -->
+    <com.example.flowalbum.IndicatorView
+        android:id="@+id/indicatorView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/layoutControls"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

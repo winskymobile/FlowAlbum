@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 文件夹列表项焦点选择器 - Netflix风格 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 焦点状态 -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/dialog_item_focused" />
+            <corners android:radius="8dp" />
+            <stroke 
+                android:width="3dp" 
+                android:color="@color/netflix_green" />
+            <padding 
+                android:left="4dp"
+                android:top="4dp"
+                android:right="4dp"
+                android:bottom="4dp" />
+        </shape>
+    </item>
+    
+    <!-- 按下状态 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#40FFFFFF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    
+    <!-- 正常状态 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</selector>

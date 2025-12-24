@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 文件夹选择对话框 - Netflix风格宫格布局 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="900dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/dialog_background"
+    android:padding="32dp">
+
+    <!-- 标题文字 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择图片来源"
+        android:textSize="20sp"
+        android:textColor="@color/dialog_text"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 所有图片选项 -->
+    <Button
+        android:id="@+id/btnAllPhotos"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="@string/all_photos"
+        android:textSize="16sp"
+        android:textColor="@drawable/button_text_selector"
+        android:background="@drawable/button_selector"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:nextFocusDown="@id/recyclerViewFolders" />
+
+    <!-- 分隔线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/netflix_green"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 文件夹宫格列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFolders"
+        android:layout_width="match_parent"
+        android:layout_height="420dp"
+        android:scrollbars="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:nextFocusUp="@id/btnAllPhotos"
+        android:nextFocusDown="@id/btnCancel" />
+
+    <!-- 分隔线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dialog_divider"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 取消按钮 -->
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="@string/cancel"
+        android:textSize="16sp"
+        android:textColor="@drawable/button_text_selector"
+        android:background="@drawable/button_selector"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:nextFocusUp="@id/recyclerViewFolders" />
+
+</LinearLayout>

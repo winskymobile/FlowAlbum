@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetSelector">
+    <selectionStates>
+      <SelectionState runConfigName="app">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-12-19T13:39:27.273689Z">
+          <Target type="BOOT_WITH_SNAPSHOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/vincent/.android/avd/Medium_Phone.avd" />
+            </handle>
+            <Snapshot name="snap_2025-12-19_20-53-31" path="$USER_HOME$/.android/avd/Medium_Phone.avd/snapshots/snap_2025-12-19_20-53-31" />
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+    </selectionStates>
+  </component>
+</project>

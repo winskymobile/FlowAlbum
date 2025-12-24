@@ -1,0 +1,87 @@
+<resources>
+
+    <!-- 基础TV主题 - Netflix风格 -->
+    <style name="Theme.FlowAlbum" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/netflix_green</item>
+        <item name="colorPrimaryDark">@color/netflix_green_dark</item>
+        <item name="colorAccent">@color/netflix_green</item>
+        <item name="android:windowBackground">@color/slideshow_background</item>
+        <item name="android:textColorPrimary">@color/control_text</item>
+        <item name="android:textColorSecondary">@color/dialog_text</item>
+    </style>
+    
+    <!-- 全屏幻灯片主题 - Netflix风格 -->
+    <style name="Theme.FlowAlbum.Fullscreen" parent="Theme.FlowAlbum">
+        <!-- 隐藏标题栏 -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <!-- 全屏显示 -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- 背景色 -->
+        <item name="android:windowBackground">@color/slideshow_background</item>
+        <!-- 保持屏幕常亮 -->
+        <item name="android:keepScreenOn">true</item>
+        <!-- 硬件加速 -->
+        <item name="android:hardwareAccelerated">true</item>
+    </style>
+    
+    <!-- 对话框主题 - Netflix风格 -->
+    <style name="Theme.FlowAlbum.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/dialog_background</item>
+        <item name="android:textColor">@color/dialog_text</item>
+        <item name="android:textColorPrimary">@color/dialog_title</item>
+        <item name="colorAccent">@color/netflix_green</item>
+        <item name="colorControlActivated">@color/netflix_green</item>
+        <item name="colorControlHighlight">@color/netflix_green_transparent</item>
+    </style>
+    
+    <!-- 按钮样式 - Netflix风格 -->
+    <style name="FlowAlbum.Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:textColor">@drawable/button_text_selector</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:minWidth">120dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+    
+    <!-- 文本样式基类 -->
+    <style name="FlowAlbum.Text" parent="android:TextAppearance">
+        <item name="android:textColor">@color/dialog_text</item>
+    </style>
+    
+    <!-- 文本样式 - 标题 -->
+    <style name="FlowAlbum.Text.Title">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/dialog_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <!-- 文本样式 - 正文 -->
+    <style name="FlowAlbum.Text.Body">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/dialog_text</item>
+    </style>
+    
+    <!-- 文本样式 - 说明文字 -->
+    <style name="FlowAlbum.Text.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/control_text</item>
+    </style>
+    
+    <!-- Switch开关样式 - Netflix风格 -->
+    <style name="FlowAlbum.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorControlActivated">@color/netflix_green</item>
+        <item name="colorSwitchThumbNormal">@color/button_normal</item>
+        <item name="android:colorForeground">@color/netflix_green</item>
+    </style>
+    
+    <!-- Spinner样式 - Netflix风格 -->
+    <style name="FlowAlbum.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:popupBackground">@color/dialog_background</item>
+    </style>
+</resources>

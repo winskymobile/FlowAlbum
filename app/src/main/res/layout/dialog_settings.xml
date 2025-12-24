@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 设置对话框布局 - Netflix风格Tab形式 -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="900dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/dialog_background"
+    android:padding="32dp">
+
+    <!-- Tab标签栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <Button
+            android:id="@+id/tabAnimation"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/animation_settings"
+            android:textSize="15sp"
+            android:textColor="@drawable/tab_text_selector"
+            android:gravity="center"
+            android:background="@drawable/tab_selector"
+            android:layout_marginEnd="6dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <Button
+            android:id="@+id/tabDisplay"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/display_settings"
+            android:textSize="15sp"
+            android:textColor="@drawable/tab_text_selector"
+            android:gravity="center"
+            android:background="@drawable/tab_selector"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <Button
+            android:id="@+id/tabPhotos"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/select_photos"
+            android:textSize="15sp"
+            android:textColor="@drawable/tab_text_selector"
+            android:gravity="center"
+            android:background="@drawable/tab_selector"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <Button
+            android:id="@+id/tabAbout"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/about"
+            android:textSize="15sp"
+            android:textColor="@drawable/tab_text_selector"
+            android:gravity="center"
+            android:background="@drawable/tab_selector"
+            android:layout_marginStart="6dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </LinearLayout>
+
+    <!-- 分隔线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/netflix_green"
+        android:layout_marginBottom="24dp" />
+
+    <!-- 内容区域容器 -->
+    <FrameLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="420dp">
+
+        <!-- 动画效果设置页面 - 可滚动 -->
+        <ScrollView
+            android:id="@+id/pageAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:visibility="visible"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 切换间隔时间设置 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="@drawable/folder_item_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="切换间隔时间："
+                        android:textSize="16sp"
+                        android:textColor="@color/dialog_text" />
+
+                    <Button
+                        android:id="@+id/btnDecreaseInterval"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:text="-"
+                        android:textSize="24sp"
+                        android:textColor="@drawable/button_text_selector"
+                        android:background="@drawable/button_selector"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <TextView
+                        android:id="@+id/textInterval"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="3 秒"
+                        android:textSize="20sp"
+                        android:textColor="@color/netflix_green"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp" />
+
+                    <Button
+                        android:id="@+id/btnIncreaseInterval"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:text="+"
+                        android:textSize="24sp"
+                        android:textColor="@drawable/button_text_selector"
+                        android:background="@drawable/button_selector"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+
+                <!-- 启用动画效果开关 -->
+                <LinearLayout
+                    android:id="@+id/layoutEnableAnimation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="@drawable/folder_item_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:clickable="true"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/enable_animation"
+                        android:textSize="16sp"
+                        android:textColor="@color/dialog_text" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchEnableAnimation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/FlowAlbum.Switch"
+                        android:focusable="false"
+                        android:clickable="false" />
+                </LinearLayout>
+
+                <!-- 动画类型宫格布局 - 3列 -->
+                <RadioGroup
+                    android:id="@+id/radioGroupAnimation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <!-- 第一行 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <RadioButton
+                        android:id="@+id/radioFade"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_fade"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioSlideLeft"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_slide_left"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioSlideRight"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_slide_right"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+
+                <!-- 第二行 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <RadioButton
+                        android:id="@+id/radioSlideUp"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_slide_up"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioSlideDown"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_slide_down"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioZoomIn"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_zoom_in"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+
+                <!-- 第三行 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioZoomOut"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_zoom_out"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioRotate"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_rotate"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioRandom"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:text="@string/animation_random"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/radio_text_selector"
+                        android:background="@drawable/radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+            </RadioGroup>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 显示设置页面 -->
+        <LinearLayout
+            android:id="@+id/pageDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- 高质量模式开关 -->
+            <LinearLayout
+                android:id="@+id/layoutHighQuality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/high_quality_mode"
+                    android:textSize="16sp"
+                    android:textColor="@color/dialog_text" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchHighQuality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/FlowAlbum.Switch"
+                    android:focusable="false"
+                    android:clickable="false" />
+            </LinearLayout>
+
+            <!-- 硬件加速开关 -->
+            <LinearLayout
+                android:id="@+id/layoutHardwareAccel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/hardware_acceleration"
+                    android:textSize="16sp"
+                    android:textColor="@color/dialog_text" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchHardwareAccel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/FlowAlbum.Switch"
+                    android:focusable="false"
+                    android:clickable="false" />
+            </LinearLayout>
+
+            <!-- 显示指示器开关 -->
+            <LinearLayout
+                android:id="@+id/layoutShowIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/show_indicator"
+                    android:textSize="16sp"
+                    android:textColor="@color/dialog_text" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchShowIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/FlowAlbum.Switch"
+                    android:focusable="false"
+                    android:clickable="false" />
+            </LinearLayout>
+
+            <!-- 自动播放开关 -->
+            <LinearLayout
+                android:id="@+id/layoutAutoPlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/auto_play"
+                    android:textSize="16sp"
+                    android:textColor="@color/dialog_text" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAutoPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/FlowAlbum.Switch"
+                    android:focusable="false"
+                    android:clickable="false" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 选择图片页面 -->
+        <LinearLayout
+            android:id="@+id/pagePhotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- 播放所有图片和刷新按钮容器 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <!-- 本地图片按钮 -->
+                <Button
+                    android:id="@+id/btnLocalPhotos"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="@string/local_photos"
+                    android:textSize="16sp"
+                    android:textColor="@drawable/button_text_selector"
+                    android:background="@drawable/button_selector"
+                    android:layout_marginEnd="8dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+
+                <!-- 外置设备按钮 -->
+                <Button
+                    android:id="@+id/btnExternalDevices"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="@string/external_devices"
+                    android:textSize="16sp"
+                    android:textColor="@drawable/button_text_selector"
+                    android:background="@drawable/button_selector"
+                    android:layout_marginStart="8dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </LinearLayout>
+
+            <!-- 文件夹宫格列表 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewFolders"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:scrollbars="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clipToPadding="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+        </LinearLayout>
+
+        <!-- 关于页面 -->
+        <ScrollView
+            android:id="@+id/pageAbout"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:visibility="gone"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center">
+
+                <!-- 应用标题 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="24sp"
+                    android:textColor="@color/netflix_green"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- 版本号 -->
+                <TextView
+                    android:id="@+id/textVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="版本 1.0"
+                    android:textSize="16sp"
+                    android:textColor="@color/dialog_text"
+                    android:gravity="center"
+                    android:layout_marginBottom="24dp" />
+
+                <!-- 版权信息 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/copyright_info"
+                    android:textSize="14sp"
+                    android:textColor="@color/control_text"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.2"
+                    android:layout_marginBottom="32dp" />
+
+                <!-- 检测更新按钮 -->
+                <Button
+                    android:id="@+id/btnCheckUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/check_update"
+                    android:textSize="16sp"
+                    android:textColor="@drawable/button_text_selector"
+                    android:background="@drawable/button_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <!-- 分隔线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dialog_divider"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 底部关闭按钮 -->
+    <Button
+        android:id="@+id/btnClose"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="@string/close"
+        android:textSize="16sp"
+        android:textColor="@drawable/button_text_selector"
+        android:background="@drawable/button_selector"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+</LinearLayout>

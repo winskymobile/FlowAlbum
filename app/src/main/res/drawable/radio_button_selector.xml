@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 单选按钮选择器 - Netflix风格 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中且有焦点 -->
+    <item android:state_checked="true" android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/netflix_green" />
+            <corners android:radius="4dp" />
+            <stroke 
+                android:width="3dp" 
+                android:color="@color/netflix_green_light" />
+        </shape>
+    </item>
+    
+    <!-- 选中状态 -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/netflix_green" />
+            <corners android:radius="4dp" />
+            <stroke 
+                android:width="2dp" 
+                android:color="@color/netflix_green" />
+        </shape>
+    </item>
+    
+    <!-- 焦点状态 -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/button_normal" />
+            <corners android:radius="4dp" />
+            <stroke 
+                android:width="3dp" 
+                android:color="@color/netflix_green" />
+        </shape>
+    </item>
+    
+    <!-- 正常状态 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/button_normal" />
+            <corners android:radius="4dp" />
+            <stroke 
+                android:width="1dp" 
+                android:color="#40FFFFFF" />
+        </shape>
+    </item>
+</selector>

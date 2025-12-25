@@ -1294,20 +1294,31 @@ class SlideshowActivity : AppCompatActivity() {
             return
         }
         
-        // 创建进度对话框
-        val progressDialogView = layoutInflater.inflate(android.R.layout.simple_list_item_1, null)
-        val progressText = progressDialogView.findViewById<TextView>(android.R.id.text1)
-        progressText.text = "准备下载..."
+        // 创建自定义进度对话框
+        val progressDialogView = layoutInflater.inflate(R.layout.dialog_download_progress, null)
+        val progressText = progressDialogView.findViewById<TextView>(R.id.textDownloadStatus)
+        val progressBar = progressDialogView.findViewById<ProgressBar>(R.id.progressBarDownload)
+        val btnCancel = progressDialogView.findViewById<Button>(R.id.btnCancelDownload)
+        val btnBackground = progressDialogView.findViewById<Button>(R.id.btnBackgroundDownload)
         
         val progressDialog = AlertDialog.Builder(this)
             .setTitle("下载更新")
             .setView(progressDialogView)
-            .setNegativeButton("后台下载") { dialog, _ ->
-                dialog.dismiss()
-                Toast.makeText(this, "下载将在后台继续", Toast.LENGTH_SHORT).show()
-            }
             .setCancelable(false)
             .create()
+        
+        // 取消下载按钮
+        btnCancel.setOnClickListener {
+            updateChecker.cancelDownload(downloadId)
+            progressDialog.dismiss()
+            Toast.makeText(this, "已取消下载", Toast.LENGTH_SHORT).show()
+        }
+        
+        // 后台下载按钮
+        btnBackground.setOnClickListener {
+            progressDialog.dismiss()
+            Toast.makeText(this, "下载将在后台继续", Toast.LENGTH_SHORT).show()
+        }
         
         progressDialog.show()
         
@@ -1320,24 +1331,31 @@ class SlideshowActivity : AppCompatActivity() {
                 if (result != null) {
                     val (progress, statusText) = result
                     progressText.text = statusText
+                    progressBar.progress = progress
                     
                     // 如果下载完成或失败，停止查询
-                    if (statusText.contains("完成") || statusText.contains("失败")) {
+                    if (statusText.contains("完成")) {
                         progressDialog.dismiss()
                         
-                        if (statusText.contains("完成")) {
-                            Toast.makeText(
-                                this@SlideshowActivity,
-                                "下载完成，请在下载目录中查看并安装",
-                                Toast.LENGTH_LONG
-                            ).show()
+                        // 下载完成，自动打开安装
+                        val fileUri = updateChecker.getDownloadedFileUri(downloadId)
+                        if (fileUri != null) {
+                            installApk(fileUri)
                         } else {
                             Toast.makeText(
                                 this@SlideshowActivity,
-                                "下载失败，请重试",
-                                Toast.LENGTH_SHORT
+                                "下载完成，但无法打开安装程序",
+                                Toast.LENGTH_LONG
                             ).show()
                         }
+                        return
+                    } else if (statusText.contains("失败")) {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@SlideshowActivity,
+                            statusText,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return
                     }
                 }
@@ -1353,6 +1371,26 @@ class SlideshowActivity : AppCompatActivity() {
         // 对话框关闭时移除回调
         progressDialog.setOnDismissListener {
             progressHandler.removeCallbacks(progressRunnable)
+        }
+    }
+    
+    /**
+     * 安装 APK
+     */
+    private fun installApk(apkUri: Uri) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(apkUri, "application/vnd.android.package-archive")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(
+                this,
+                "无法打开安装程序: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

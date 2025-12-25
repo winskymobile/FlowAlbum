@@ -515,4 +515,31 @@ class UpdateChecker(private val context: Context) {
             null
         }
     }
+    
+    /**
+     * 取消下载
+     * @param downloadId 下载任务 ID
+     */
+    fun cancelDownload(downloadId: Long) {
+        try {
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.remove(downloadId)
+        } catch (e: Exception) {
+            // 忽略错误
+        }
+    }
+    
+    /**
+     * 获取下载文件的 Uri
+     * @param downloadId 下载任务 ID
+     * @return 下载文件的 Uri，失败返回 null
+     */
+    fun getDownloadedFileUri(downloadId: Long): Uri? {
+        return try {
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.getUriForDownloadedFile(downloadId)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

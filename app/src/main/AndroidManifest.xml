@@ -14,6 +14,8 @@
         tools:ignore="ScopedStorage" />
     <!-- Android 13+ 需要的新权限 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- Android 8.0+ 安装APK权限 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- Android 11+ 访问所有文件权限（用于访问U盘等外置存储） -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />

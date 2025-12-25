@@ -37,13 +37,13 @@
 
 ### 🎉 最新版本：v1.0.3
 
-📅 *发布日期：2025年12月25日*
+📅 *发布日期：2025年12月26日*
 
 <br/>
 
 | 📦 下载链接 | 📊 文件信息 |
 |:---:|:---:|
-| [![下载 APK](https://img.shields.io/badge/⬇️%20立即下载-FlowAlbum%20v1.0.3-0066CC?style=for-the-badge&logo=android&logoColor=white)](app/release/FlowAlbum_v1.0.3_20251226004147.apk) | 适用于 Android TV / 电视盒子 |
+| [![下载 APK](https://img.shields.io/badge/⬇️%20立即下载-FlowAlbum%20v1.0.3-0066CC?style=for-the-badge&logo=android&logoColor=white)](app/release/FlowAlbum_v1.0.3_20251226011218.apk) | 适用于 Android TV / 电视盒子 |
 
 </div>
 
@@ -69,7 +69,7 @@
 2. 使用数据线或 WiFi ADB 连接电视和电脑
 3. 在电脑上执行命令：
    ```bash
-   adb install FlowAlbum_v1.0.3_20251226004147.apk
+   adb install FlowAlbum_v1.0.3_20251226011218.apk
    ```
 
 </details>
@@ -280,13 +280,15 @@
 ## 🔄 版本历史
 
 <details open>
-<summary><b>🆕 v1.0.3</b> (2025-12-25) - 最新版本</summary>
+<summary><b>🆕 v1.0.3</b> (2025-12-26) - 最新版本</summary>
 
 | 类型 | 更新内容 |
 |:---:|:---|
-| ✨ 新增 | 锐化强度可调节（关闭/轻微/标准/强烈） |
+| ✨ 新增 | 饱和度调节（关闭/轻微/标准/强烈） |
+| ✨ 新增 | 应用内自动更新下载功能 |
 | 🎨 优化 | 设置界面布局改进 |
 | 🎨 优化 | 图像处理性能提升 |
+| 🎨 优化 | 更新下载体验优化 |
 | 🐛 修复 | 设置保存稳定性问题 |
 
 </details>
@@ -297,7 +299,6 @@
 | 类型 | 更新内容 |
 |:---:|:---|
 | ✨ 新增 | 应用内更新检查功能 |
-| ✨ 新增 | 图片锐化增强处理 |
 | 🎨 优化 | 照片加载性能提升 |
 | 🎨 优化 | 动画过渡更加流畅 |
 | 🐛 修复 | 部分设备权限问题 |

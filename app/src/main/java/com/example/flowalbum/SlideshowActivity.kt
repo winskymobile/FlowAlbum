@@ -941,11 +941,10 @@ class SlideshowActivity : AppCompatActivity() {
                     }
                     // 已是最新版本
                     else -> {
-                        val formattedTimestamp = updateChecker.formatTimestamp(updateInfo.currentTimestamp)
                         val message = getString(
                             R.string.current_version_info,
                             updateInfo.currentVersion,
-                            formattedTimestamp
+                            updateInfo.currentTimestamp
                         )
                         
                         AlertDialog.Builder(this@SlideshowActivity)

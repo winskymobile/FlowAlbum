@@ -427,16 +427,31 @@ class UpdateChecker(private val context: Context) {
                 // 设置为可见和可管理
                 setVisibleInDownloadsUi(true)
                 
-                // 允许使用移动网络和 WiFi
+                // 允许使用所有网络类型下载（WiFi、移动数据、漫游）
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     @Suppress("DEPRECATION")
                     setAllowedNetworkTypes(
-                        DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
+                        DownloadManager.Request.NETWORK_WIFI or
+                        DownloadManager.Request.NETWORK_MOBILE
                     )
+                    // 允许在漫游时下载
+                    @Suppress("DEPRECATION")
+                    setAllowedOverRoaming(true)
+                }
+                
+                // 允许在按流量计费的网络上下载（Android 11+）
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    setAllowedOverMetered(true)
                 }
                 
                 // 设置MIME类型
                 setMimeType("application/vnd.android.package-archive")
+                
+                // 要求设备保持唤醒（防止下载中断）
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    setRequiresDeviceIdle(false)
+                    setRequiresCharging(false)
+                }
             }
             
             // 加入下载队列
@@ -476,33 +491,33 @@ class UpdateChecker(private val context: Context) {
                 }
                 
                 val statusText = when (status) {
-                    DownloadManager.STATUS_PENDING -> "等待下载"
+                    DownloadManager.STATUS_PENDING -> "准备下载..."
                     DownloadManager.STATUS_RUNNING -> "正在下载 $progress%"
                     DownloadManager.STATUS_PAUSED -> {
                         val pauseReason = when (reason) {
-                            DownloadManager.PAUSED_QUEUED_FOR_WIFI -> "等待WiFi连接"
-                            DownloadManager.PAUSED_WAITING_TO_RETRY -> "等待重试"
-                            DownloadManager.PAUSED_WAITING_FOR_NETWORK -> "等待网络连接"
-                            else -> "下载已暂停"
+                            DownloadManager.PAUSED_QUEUED_FOR_WIFI -> "等待WiFi连接..."
+                            DownloadManager.PAUSED_WAITING_TO_RETRY -> "网络不稳定，正在重试... $progress%"
+                            DownloadManager.PAUSED_WAITING_FOR_NETWORK -> "网络连接中断，等待恢复..."
+                            else -> "下载已暂停 $progress%"
                         }
                         pauseReason
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> "下载完成"
                     DownloadManager.STATUS_FAILED -> {
                         val failReason = when (reason) {
-                            DownloadManager.ERROR_CANNOT_RESUME -> "无法恢复下载"
-                            DownloadManager.ERROR_DEVICE_NOT_FOUND -> "未找到存储设备"
-                            DownloadManager.ERROR_FILE_ALREADY_EXISTS -> "文件已存在"
-                            DownloadManager.ERROR_FILE_ERROR -> "文件错误"
-                            DownloadManager.ERROR_HTTP_DATA_ERROR -> "HTTP数据错误"
-                            DownloadManager.ERROR_INSUFFICIENT_SPACE -> "存储空间不足"
-                            DownloadManager.ERROR_TOO_MANY_REDIRECTS -> "重定向次数过多"
-                            DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> "HTTP错误"
-                            else -> "下载失败(代码:$reason)"
+                            DownloadManager.ERROR_CANNOT_RESUME -> "下载失败：无法恢复下载"
+                            DownloadManager.ERROR_DEVICE_NOT_FOUND -> "下载失败：未找到存储设备"
+                            DownloadManager.ERROR_FILE_ALREADY_EXISTS -> "下载失败：文件已存在"
+                            DownloadManager.ERROR_FILE_ERROR -> "下载失败：文件写入错误"
+                            DownloadManager.ERROR_HTTP_DATA_ERROR -> "下载失败：网络数据错误"
+                            DownloadManager.ERROR_INSUFFICIENT_SPACE -> "下载失败：存储空间不足"
+                            DownloadManager.ERROR_TOO_MANY_REDIRECTS -> "下载失败：链接重定向过多"
+                            DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> "下载失败：服务器错误"
+                            else -> "下载失败(错误代码:$reason)"
                         }
                         failReason
                     }
-                    else -> "未知状态"
+                    else -> "下载中..."
                 }
                 
                 cursor.close()

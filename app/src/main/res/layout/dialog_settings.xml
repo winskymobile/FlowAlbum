@@ -110,8 +110,8 @@
                     android:gravity="center_vertical"
                     android:padding="16dp"
                     android:background="@drawable/folder_item_selector"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:layout_marginBottom="16dp">
 
                     <TextView

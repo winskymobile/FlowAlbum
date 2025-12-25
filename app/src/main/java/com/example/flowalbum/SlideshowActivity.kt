@@ -51,6 +51,7 @@ class SlideshowActivity : AppCompatActivity() {
 
     // 播放控制
     private var isPlaying = false                          // 是否正在播放
+    private var userPaused = false                         // 用户是否主动暂停（通过控制栏暂停按钮）
     private val handler = Handler(Looper.getMainLooper())  // 主线程Handler
     private var slideshowRunnable: Runnable? = null       // 幻灯片播放任务
     
@@ -220,8 +221,8 @@ class SlideshowActivity : AppCompatActivity() {
                     updateIndicator()
                     updatePhotoInfo()
 
-                    // 根据设置决定是否自动播放
-                    if (settingsManager.isAutoPlay()) {
+                    // 根据设置决定是否自动播放（只有当自动播放开关打开且用户未主动暂停时才自动播放）
+                    if (settingsManager.isAutoPlay() && !userPaused) {
                         startSlideshow()
                     }
                 }
@@ -471,8 +472,12 @@ class SlideshowActivity : AppCompatActivity() {
         if (photoList.isEmpty()) return
 
         if (isPlaying) {
+            // 用户主动暂停
+            userPaused = true
             stopSlideshow()
         } else {
+            // 用户主动播放，清除暂停标记
+            userPaused = false
             startSlideshow()
         }
     }
@@ -869,8 +874,8 @@ class SlideshowActivity : AppCompatActivity() {
         // 关闭按钮
         btnClose.setOnClickListener {
             dialog.dismiss()
-            // 根据自动播放设置决定是否恢复播放
-            if (settingsManager.isAutoPlay() && photoList.isNotEmpty() && !isPlaying) {
+            // 根据自动播放设置决定是否恢复播放（只有当自动播放开关打开且用户未主动暂停时才自动播放）
+            if (settingsManager.isAutoPlay() && !userPaused && photoList.isNotEmpty() && !isPlaying) {
                 startSlideshow()
             }
         }
@@ -921,14 +926,8 @@ class SlideshowActivity : AppCompatActivity() {
                     // 点击文件夹
                     parentDialog.dismiss()
                     loadPhotosFromSelectedFolder(folder.path)
-                    // 根据自动播放设置决定是否开始播放
-                    if (settingsManager.isAutoPlay()) {
-                        handler.postDelayed({
-                            if (photoList.isNotEmpty() && !isPlaying) {
-                                startSlideshow()
-                            }
-                        }, 300) // 延迟一点时间，等待图片加载完成
-                    }
+                    // 重新加载图片时，清除用户暂停标记
+                    userPaused = false
                 }
                 recyclerView.adapter = adapter
                 
@@ -988,14 +987,8 @@ class SlideshowActivity : AppCompatActivity() {
                     // 点击外置设备目录
                     parentDialog.dismiss()
                     loadPhotosFromSelectedFolder(device.path)
-                    // 根据自动播放设置决定是否开始播放
-                    if (settingsManager.isAutoPlay()) {
-                        handler.postDelayed({
-                            if (photoList.isNotEmpty() && !isPlaying) {
-                                startSlideshow()
-                            }
-                        }, 300) // 延迟一点时间，等待图片加载完成
-                    }
+                    // 重新加载图片时，清除用户暂停标记
+                    userPaused = false
                 }
                 recyclerView.adapter = adapter
                 
@@ -1203,8 +1196,8 @@ class SlideshowActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                     
-                    // 根据自动播放设置决定是否开始播放
-                    if (settingsManager.isAutoPlay() && !isPlaying) {
+                    // 根据自动播放设置决定是否开始播放（只有当自动播放开关打开且用户未主动暂停时才自动播放）
+                    if (settingsManager.isAutoPlay() && !userPaused && !isPlaying) {
                         startSlideshow()
                     }
                 }
@@ -1298,9 +1291,18 @@ class SlideshowActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        // 暂停播放
+        // Activity暂停时停止播放，但不标记为用户主动暂停
+        // 这样当重新进入时，如果自动播放开关打开，会自动恢复播放
         if (isPlaying) {
             stopSlideshow()
+        }
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // Activity恢复时，如果自动播放开关打开且用户未主动暂停，自动开始播放
+        if (settingsManager.isAutoPlay() && !userPaused && photoList.isNotEmpty() && !isPlaying) {
+            startSlideshow()
         }
     }
 }

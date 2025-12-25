@@ -35,7 +35,7 @@
     <string name="settings_title">幻灯片设置</string>
     <string name="interval_settings">切换间隔</string>
     <string name="interval_seconds">%d 秒</string>
-    <string name="animation_settings">动画效果</string>
+    <string name="animation_settings">播放设置</string>
     <string name="animation_type">动画类型</string>
     <string name="enable_animation">启用动画效果</string>
     <string name="random_animation">随机动画</string>

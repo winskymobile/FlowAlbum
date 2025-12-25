@@ -579,7 +579,7 @@
                 android:minHeight="400dp"
                 android:orientation="vertical"
                 android:padding="16dp"
-                android:gravity="center">
+                android:gravity="top|center_horizontal">
 
                 <!-- 应用标题 -->
                 <TextView

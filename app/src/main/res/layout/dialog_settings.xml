@@ -4,7 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialogRootLayout"
     android:layout_width="900dp"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="864dp"
     android:orientation="vertical"
     android:background="@color/dialog_background"
     android:paddingStart="32dp"
@@ -96,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:minHeight="400dp">
+        android:minHeight="600dp">
 
         <!-- 动画效果设置页面 - 可滚动 -->
         <ScrollView

@@ -931,17 +931,8 @@ class SlideshowActivity : AppCompatActivity() {
                             .setMessage(message)
                             .setPositiveButton(getString(R.string.update_download)) { dialog, _ ->
                                 dialog.dismiss()
-                                // 打开浏览器下载
-                                try {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateInfo.downloadUrl))
-                                    startActivity(intent)
-                                } catch (e: Exception) {
-                                    Toast.makeText(
-                                        this@SlideshowActivity,
-                                        "无法打开下载链接",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                // 使用内置下载功能
+                                startDownload(updateChecker, updateInfo.downloadUrl, updateInfo.fileName)
                             }
                             .setNegativeButton(getString(R.string.update_later)) { dialog, _ ->
                                 dialog.dismiss()
@@ -1288,6 +1279,80 @@ class SlideshowActivity : AppCompatActivity() {
                 showLoading(false)
                 showError("加载图片失败: ${e.message}")
             }
+        }
+    }
+    
+    /**
+     * 开始下载更新并显示进度
+     */
+    private fun startDownload(updateChecker: UpdateChecker, downloadUrl: String, fileName: String) {
+        // 开始下载
+        val downloadId = updateChecker.downloadApk(downloadUrl, fileName)
+        
+        if (downloadId == -1L) {
+            Toast.makeText(this, "启动下载失败", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        // 创建进度对话框
+        val progressDialogView = layoutInflater.inflate(android.R.layout.simple_list_item_1, null)
+        val progressText = progressDialogView.findViewById<TextView>(android.R.id.text1)
+        progressText.text = "准备下载..."
+        
+        val progressDialog = AlertDialog.Builder(this)
+            .setTitle("下载更新")
+            .setView(progressDialogView)
+            .setNegativeButton("后台下载") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(this, "下载将在后台继续", Toast.LENGTH_SHORT).show()
+            }
+            .setCancelable(false)
+            .create()
+        
+        progressDialog.show()
+        
+        // 定时查询下载进度
+        val progressHandler = Handler(Looper.getMainLooper())
+        val progressRunnable = object : Runnable {
+            override fun run() {
+                val result = updateChecker.queryDownloadProgress(downloadId)
+                
+                if (result != null) {
+                    val (progress, statusText) = result
+                    progressText.text = statusText
+                    
+                    // 如果下载完成或失败，停止查询
+                    if (statusText.contains("完成") || statusText.contains("失败")) {
+                        progressDialog.dismiss()
+                        
+                        if (statusText.contains("完成")) {
+                            Toast.makeText(
+                                this@SlideshowActivity,
+                                "下载完成，请在下载目录中查看并安装",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this@SlideshowActivity,
+                                "下载失败，请重试",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return
+                    }
+                }
+                
+                // 继续查询
+                progressHandler.postDelayed(this, 500)
+            }
+        }
+        
+        // 开始查询进度
+        progressHandler.postDelayed(progressRunnable, 500)
+        
+        // 对话框关闭时移除回调
+        progressDialog.setOnDismissListener {
+            progressHandler.removeCallbacks(progressRunnable)
         }
     }
 

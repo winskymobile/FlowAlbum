@@ -1,8 +1,11 @@
 package com.example.flowalbum
 
+import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -364,6 +367,96 @@ class UpdateChecker(private val context: Context) {
             }
         } catch (e: Exception) {
             timestamp
+        }
+    }
+    
+    /**
+     * 使用系统 DownloadManager 下载 APK
+     * @param downloadUrl 下载链接
+     * @param fileName APK 文件名
+     * @return 下载任务 ID，如果失败返回 -1
+     */
+    fun downloadApk(downloadUrl: String, fileName: String): Long {
+        return try {
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            
+            val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
+                // 设置标题和描述
+                setTitle("FlowAlbum 更新")
+                setDescription("正在下载 $fileName")
+                
+                // 设置通知
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                
+                // 设置保存路径为公共下载目录
+                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                
+                // 设置为可见和可管理
+                setVisibleInDownloadsUi(true)
+                
+                // 允许使用移动网络和 WiFi
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    @Suppress("DEPRECATION")
+                    setAllowedNetworkTypes(
+                        DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
+                    )
+                }
+                
+                // 设置MIME类型
+                setMimeType("application/vnd.android.package-archive")
+            }
+            
+            // 加入下载队列
+            downloadManager.enqueue(request)
+        } catch (e: Exception) {
+            -1L
+        }
+    }
+    
+    /**
+     * 查询下载进度
+     * @param downloadId 下载任务 ID
+     * @return Pair<下载进度百分比(0-100), 下载状态描述>，失败返回 null
+     */
+    fun queryDownloadProgress(downloadId: Long): Pair<Int, String>? {
+        return try {
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            
+            val query = DownloadManager.Query().setFilterById(downloadId)
+            val cursor = downloadManager.query(query)
+            
+            if (cursor.moveToFirst()) {
+                val statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                val downloadedBytesIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+                val totalBytesIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+                
+                val status = cursor.getInt(statusIndex)
+                val downloadedBytes = cursor.getLong(downloadedBytesIndex)
+                val totalBytes = cursor.getLong(totalBytesIndex)
+                
+                val progress = if (totalBytes > 0) {
+                    ((downloadedBytes * 100) / totalBytes).toInt()
+                } else {
+                    0
+                }
+                
+                val statusText = when (status) {
+                    DownloadManager.STATUS_PENDING -> "等待下载"
+                    DownloadManager.STATUS_RUNNING -> "正在下载 $progress%"
+                    DownloadManager.STATUS_PAUSED -> "下载已暂停"
+                    DownloadManager.STATUS_SUCCESSFUL -> "下载完成"
+                    DownloadManager.STATUS_FAILED -> "下载失败"
+                    else -> "未知状态"
+                }
+                
+                cursor.close()
+                Pair(progress, statusText)
+            } else {
+                cursor.close()
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }

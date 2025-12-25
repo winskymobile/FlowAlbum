@@ -6,6 +6,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+// 定义构建时间戳（确保APK文件名和BuildConfig中的时间戳一致）
+val buildTimestamp: String = SimpleDateFormat("yyyyMMddHHmmss").format(Date())
+
 android {
     namespace = "com.example.flowalbum"
     compileSdk = 34
@@ -16,7 +19,14 @@ android {
         targetSdk = 34
         versionCode = 3
         versionName = "1.0.2"
-
+        
+        // 将构建时间戳添加到BuildConfig
+        buildConfigField("String", "BUILD_TIMESTAMP", "\"$buildTimestamp\"")
+    }
+    
+    // 启用BuildConfig生成
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -34,8 +44,8 @@ android {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val appName = "FlowAlbum"
             val versionName = defaultConfig.versionName
-            val timestamp = SimpleDateFormat("yyyyMMddHHmmss").format(Date())
-            output.outputFileName = "${appName}_v${versionName}_${timestamp}.apk"
+            // 使用统一的构建时间戳
+            output.outputFileName = "${appName}_v${versionName}_${buildTimestamp}.apk"
         }
     }
     compileOptions {

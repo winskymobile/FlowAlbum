@@ -18,21 +18,33 @@ import java.util.Locale
 class UpdateChecker(private val context: Context) {
 
     companion object {
-        // GitHub API地址，用于获取release目录下的文件列表
-        private const val GITHUB_API_URL = 
+        // GitHub API原始地址（不含代理前缀）
+        private const val GITHUB_API_PATH =
             "https://api.github.com/repos/winskymobile/FlowAlbum/contents/app/release"
         
-        // GitHub Raw下载地址前缀
-        private const val GITHUB_RAW_URL = 
+        // GitHub Raw下载原始地址（不含代理前缀）
+        private const val GITHUB_RAW_PATH =
             "https://github.com/winskymobile/FlowAlbum/raw/main/app/release/"
+        
+        // 代理站前缀列表（空字符串表示直接访问，其他为代理站前缀）
+        // 按优先级排序：首先尝试直接访问，失败后依次尝试代理站
+        private val PROXY_PREFIXES = listOf(
+            "",                              // 直接访问（无代理）
+            "https://gh-proxy.com/",         // 代理站1
+            "https://cors.isteed.cc/",       // 代理站2
+            "https://ghfast.top/"            // 代理站3
+        )
         
         // APK文件名正则表达式：FlowAlbum_v{版本号}_{时间戳}.apk
         private val APK_PATTERN = Regex("""FlowAlbum_v([\d.]+)_(\d{14})\.apk""")
         
-        // 连接超时时间（毫秒）
-        private const val CONNECT_TIMEOUT = 10000
-        private const val READ_TIMEOUT = 10000
+        // 连接超时时间（毫秒）- 每个尝试的超时时间较短，以便快速切换到下一个代理
+        private const val CONNECT_TIMEOUT = 8000
+        private const val READ_TIMEOUT = 8000
     }
+    
+    // 当前成功使用的代理前缀（用于生成下载URL）
+    private var successfulProxyPrefix: String = ""
 
     /**
      * 更新信息数据类
@@ -143,35 +155,50 @@ class UpdateChecker(private val context: Context) {
 
     /**
      * 获取当前应用构建时间戳
-     * 从APK文件名或构建配置中获取
+     * 从BuildConfig.BUILD_TIMESTAMP获取
      */
     private fun getCurrentBuildTimestamp(): String {
-        // 返回一个默认时间戳，实际应用中可以通过BuildConfig获取
-        // 这里使用空字符串表示未知时间戳
         return try {
-            // 尝试从包信息获取最后更新时间
-            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.getPackageInfo(
-                    context.packageName,
-                    PackageManager.PackageInfoFlags.of(0)
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                context.packageManager.getPackageInfo(context.packageName, 0)
-            }
-            // 使用lastUpdateTime作为参考时间戳
-            val sdf = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
-            sdf.format(packageInfo.lastUpdateTime)
+            // 从BuildConfig获取构建时间戳
+            BuildConfig.BUILD_TIMESTAMP
         } catch (e: Exception) {
             ""
         }
     }
 
     /**
-     * 从GitHub API获取APK文件列表
+     * 从GitHub API获取APK文件列表（支持代理轮询）
      */
     private fun fetchApkListFromGitHub(): List<ApkInfo> {
-        val url = URL(GITHUB_API_URL)
+        val errors = mutableListOf<String>()
+        
+        // 依次尝试直接访问和各个代理站
+        for (proxyPrefix in PROXY_PREFIXES) {
+            try {
+                val apiUrl = proxyPrefix + GITHUB_API_PATH
+                val result = tryFetchFromUrl(apiUrl)
+                
+                // 成功获取，记录当前使用的代理前缀
+                successfulProxyPrefix = proxyPrefix
+                return result
+                
+            } catch (e: Exception) {
+                val source = if (proxyPrefix.isEmpty()) "直接访问" else "代理站 $proxyPrefix"
+                errors.add("$source: ${e.message}")
+                // 继续尝试下一个代理
+                continue
+            }
+        }
+        
+        // 所有尝试都失败
+        throw Exception("检测更新失败，请检查网络连接\n\n详细信息:\n${errors.joinToString("\n")}")
+    }
+    
+    /**
+     * 尝试从指定URL获取APK列表
+     */
+    private fun tryFetchFromUrl(apiUrl: String): List<ApkInfo> {
+        val url = URL(apiUrl)
         val connection = url.openConnection() as HttpURLConnection
         
         try {
@@ -213,7 +240,8 @@ class UpdateChecker(private val context: Context) {
                     if (matchResult != null) {
                         val version = matchResult.groupValues[1]
                         val timestamp = matchResult.groupValues[2]
-                        val downloadUrl = GITHUB_RAW_URL + name
+                        // 使用成功的代理前缀生成下载URL
+                        val downloadUrl = successfulProxyPrefix + GITHUB_RAW_PATH + name
                         
                         apkList.add(ApkInfo(
                             fileName = name,

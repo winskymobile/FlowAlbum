@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.content.Intent
+import android.net.Uri
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 
@@ -250,25 +252,55 @@ class SlideshowActivity : AppCompatActivity() {
         if (photoList.isEmpty() || currentIndex >= photoList.size) return
 
         val photo = photoList[currentIndex]
+        val sharpness = settingsManager.getTextSharpness()
         
         // 构建Glide请求 - 始终使用最高画质
-        val request = Glide.with(this)
+        var requestBuilder = Glide.with(this)
             .load(photo.uri)
             .override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL)
             .encodeQuality(100)  // 最高编码质量
-            .dontTransform()  // 不做任何变换
             .dontAnimate()  // 禁用动画
             .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.DATA)  // 缓存原始数据
             .skipMemoryCache(false)
         
         // 根据真彩色开关设置色彩格式
         if (settingsManager.isHighQualityMode()) {
-            request.format(com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888)  // 32位真彩色
+            requestBuilder = requestBuilder.format(com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888)  // 32位真彩色
         } else {
-            request.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩（节省内存）
+            requestBuilder = requestBuilder.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩（节省内存）
         }
         
-        request.into(imageViewCurrent)
+        // 如果锐化等级大于0，应用锐化变换
+        if (sharpness > 0) {
+            requestBuilder = requestBuilder.transform(SharpnessTransformation(sharpness))
+        }
+        
+        requestBuilder.into(imageViewCurrent)
+        
+        // 应用色彩饱和度效果
+        applySaturationEffect(imageViewCurrent)
+    }
+    
+    /**
+     * 应用色彩饱和度效果
+     */
+    private fun applySaturationEffect(imageView: ImageView) {
+        val saturation = settingsManager.getColorSaturation()
+        
+        // 如果饱和度为0，则不应用任何效果
+        if (saturation == 0) {
+            imageView.colorFilter = null
+            return
+        }
+        
+        // 创建饱和度矩阵
+        val saturationMatrix = android.graphics.ColorMatrix()
+        // 饱和度：0 = 1.0 (不处理), 1-5 = 1.2到2.0 (增强饱和度)
+        val saturationValue = 1.0f + (saturation * 0.2f)  // 1=1.2, 2=1.4, 3=1.6, 4=1.8, 5=2.0
+        saturationMatrix.setSaturation(saturationValue)
+        
+        // 应用饱和度滤镜
+        imageView.colorFilter = android.graphics.ColorMatrixColorFilter(saturationMatrix)
     }
 
     /**
@@ -336,57 +368,64 @@ class SlideshowActivity : AppCompatActivity() {
             settingsManager.getAnimationTypeEnum()
         }
         
+        val sharpness = settingsManager.getTextSharpness()
+        
         // 构建Glide请求 - 始终使用最高画质
-        val glideRequest = Glide.with(this)
+        var glideRequest = Glide.with(this)
             .load(photo.uri)
             .override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL)
             .encodeQuality(100)  // 最高编码质量
-            .dontTransform()  // 不做任何变换
             .dontAnimate()  // 禁用动画
             .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.DATA)  // 缓存原始数据
             .skipMemoryCache(false)
         
         // 根据真彩色开关设置色彩格式
         if (settingsManager.isHighQualityMode()) {
-            glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888)  // 32位真彩色
+            glideRequest = glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888)  // 32位真彩色
         } else {
-            glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩
+            glideRequest = glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩
         }
+        
+        // 如果锐化等级大于0，应用锐化变换
+        if (sharpness > 0) {
+            glideRequest = glideRequest.transform(SharpnessTransformation(sharpness))
+        }
+        
+        // 先加载图片
+        glideRequest.into(imageViewCurrent)
+        
+        // 应用色彩饱和度效果
+        applySaturationEffect(imageViewCurrent)
         
         // 根据动画类型应用不同效果
         when (animationType) {
             AnimationHelper.AnimationType.FADE -> {
                 // 淡入淡出
                 imageViewCurrent.alpha = 0f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().alpha(1f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.SLIDE_LEFT -> {
                 // 从右向左滑入
                 imageViewCurrent.translationX = imageViewCurrent.width.toFloat()
                 imageViewCurrent.alpha = 1f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().translationX(0f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.SLIDE_RIGHT -> {
                 // 从左向右滑入
                 imageViewCurrent.translationX = -imageViewCurrent.width.toFloat()
                 imageViewCurrent.alpha = 1f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().translationX(0f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.SLIDE_UP -> {
                 // 从下向上滑入
                 imageViewCurrent.translationY = imageViewCurrent.height.toFloat()
                 imageViewCurrent.alpha = 1f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().translationY(0f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.SLIDE_DOWN -> {
                 // 从上向下滑入
                 imageViewCurrent.translationY = -imageViewCurrent.height.toFloat()
                 imageViewCurrent.alpha = 1f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().translationY(0f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.ZOOM_IN -> {
@@ -394,7 +433,6 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.scaleX = 0.3f
                 imageViewCurrent.scaleY = 0.3f
                 imageViewCurrent.alpha = 0f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.ZOOM_OUT -> {
@@ -402,20 +440,17 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.scaleX = 1.5f
                 imageViewCurrent.scaleY = 1.5f
                 imageViewCurrent.alpha = 0f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.ROTATE -> {
                 // 旋转进入
                 imageViewCurrent.rotation = -90f
                 imageViewCurrent.alpha = 0f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().rotation(0f).alpha(1f).setDuration(800).start()
             }
             else -> {
                 // 默认淡入淡出
                 imageViewCurrent.alpha = 0f
-                glideRequest.into(imageViewCurrent)
                 imageViewCurrent.animate().alpha(1f).setDuration(800).start()
             }
         }
@@ -622,6 +657,14 @@ class SlideshowActivity : AppCompatActivity() {
         val switchHighQuality = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchHighQuality)
         val switchHardwareAccel = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchHardwareAccel)
         val switchFitScreen = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchFitScreen)
+        // 获取色彩饱和度控件
+        val textSaturationValue = dialogView.findViewById<TextView>(R.id.textSaturationValue)
+        val seekBarSaturation = dialogView.findViewById<android.widget.SeekBar>(R.id.seekBarSaturation)
+        
+        // 获取文字锐化控件
+        val textSharpnessValue = dialogView.findViewById<TextView>(R.id.textSharpnessValue)
+        val seekBarSharpness = dialogView.findViewById<android.widget.SeekBar>(R.id.seekBarSharpness)
+        
         
         // 获取关闭按钮
         val btnClose = dialogView.findViewById<Button>(R.id.btnClose)
@@ -736,6 +779,97 @@ class SlideshowActivity : AppCompatActivity() {
         switchHighQuality.isChecked = settingsManager.isHighQualityMode()
         switchHardwareAccel.isChecked = settingsManager.isHardwareAcceleration()
         switchFitScreen.isChecked = settingsManager.isFitScreen()
+        
+        // 初始化色彩饱和度和文字锐化显示
+        val currentSaturation = settingsManager.getColorSaturation()
+        val currentSharpness = settingsManager.getTextSharpness()
+        textSaturationValue.text = currentSaturation.toString()
+        textSharpnessValue.text = currentSharpness.toString()
+        seekBarSaturation.progress = currentSaturation
+        seekBarSharpness.progress = currentSharpness
+
+        // 色彩饱和度SeekBar监听
+        seekBarSaturation.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+                textSaturationValue.text = progress.toString()
+                settingsManager.setColorSaturation(progress)
+                applySaturationEffect(imageViewCurrent)
+            }
+            
+            override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {}
+        })
+        
+        // 色彩饱和度SeekBar按键监听 - 防止焦点跳出
+        seekBarSaturation.setOnKeyListener { view, keyCode, event ->
+            if (event.action == android.view.KeyEvent.ACTION_DOWN) {
+                val currentProgress = seekBarSaturation.progress
+                when (keyCode) {
+                    android.view.KeyEvent.KEYCODE_DPAD_LEFT -> {
+                        if (currentProgress <= 0) {
+                            // 已经在最小值，消费事件防止焦点跳出
+                            true
+                        } else {
+                            false  // 允许正常调整
+                        }
+                    }
+                    android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                        if (currentProgress >= 5) {
+                            // 已经在最大值，消费事件防止焦点跳出
+                            true
+                        } else {
+                            false  // 允许正常调整
+                        }
+                    }
+                    else -> false
+                }
+            } else {
+                false
+            }
+        }
+        
+        // 文字锐化SeekBar监听 - 锐化需要重新加载图片（使用卷积矩阵处理）
+        seekBarSharpness.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+                textSharpnessValue.text = progress.toString()
+                settingsManager.setTextSharpness(progress)
+            }
+            
+            override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
+            
+            override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
+                // 拖动结束时重新加载图片以应用锐化效果
+                displayCurrentPhoto()
+            }
+        })
+        
+        // 文字锐化SeekBar按键监听 - 防止焦点跳出
+        seekBarSharpness.setOnKeyListener { view, keyCode, event ->
+            if (event.action == android.view.KeyEvent.ACTION_DOWN) {
+                val currentProgress = seekBarSharpness.progress
+                when (keyCode) {
+                    android.view.KeyEvent.KEYCODE_DPAD_LEFT -> {
+                        if (currentProgress <= 0) {
+                            // 已经在最小值，消费事件防止焦点跳出
+                            true
+                        } else {
+                            false  // 允许正常调整
+                        }
+                    }
+                    android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                        if (currentProgress >= 5) {
+                            // 已经在最大值，消费事件防止焦点跳出
+                            true
+                        } else {
+                            false  // 允许正常调整
+                        }
+                    }
+                    else -> false
+                }
+            } else {
+                false
+            }
+        }
 
         // 间隔调整按钮 - 实时保存
         btnDecreaseInterval.setOnClickListener {
@@ -828,19 +962,75 @@ class SlideshowActivity : AppCompatActivity() {
                 .create()
             checkingDialog.show()
             
-            // 模拟检测更新（延迟1秒后显示结果）
-            handler.postDelayed({
+            // 使用UpdateChecker检测更新
+            val updateChecker = UpdateChecker(this)
+            lifecycleScope.launch {
+                val updateInfo = updateChecker.checkForUpdate()
+                
                 checkingDialog.dismiss()
                 
-                // 显示检测结果
-                AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.check_update))
-                    .setMessage(getString(R.string.no_update))
-                    .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                        dialog.dismiss()
+                when {
+                    // 检测出错
+                    updateInfo.errorMessage != null -> {
+                        AlertDialog.Builder(this@SlideshowActivity)
+                            .setTitle(getString(R.string.update_check_failed))
+                            .setMessage(updateInfo.errorMessage)
+                            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
                     }
-                    .show()
-            }, 1000)
+                    // 有新版本
+                    updateInfo.hasUpdate -> {
+                        val formattedTimestamp = updateChecker.formatTimestamp(updateInfo.latestTimestamp)
+                        val message = getString(
+                            R.string.update_version_info,
+                            updateInfo.latestVersion,
+                            formattedTimestamp,
+                            updateInfo.currentVersion
+                        )
+                        
+                        AlertDialog.Builder(this@SlideshowActivity)
+                            .setTitle(getString(R.string.update_available))
+                            .setMessage(message)
+                            .setPositiveButton(getString(R.string.update_download)) { dialog, _ ->
+                                dialog.dismiss()
+                                // 打开浏览器下载
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateInfo.downloadUrl))
+                                    startActivity(intent)
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        this@SlideshowActivity,
+                                        "无法打开下载链接",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            .setNegativeButton(getString(R.string.update_later)) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
+                    // 已是最新版本
+                    else -> {
+                        val formattedTimestamp = updateChecker.formatTimestamp(updateInfo.currentTimestamp)
+                        val message = getString(
+                            R.string.current_version_info,
+                            updateInfo.currentVersion,
+                            formattedTimestamp
+                        )
+                        
+                        AlertDialog.Builder(this@SlideshowActivity)
+                            .setTitle(getString(R.string.check_update))
+                            .setMessage("${getString(R.string.no_update)}\n\n$message")
+                            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
+                }
+            }
         }
 
         // 关闭按钮

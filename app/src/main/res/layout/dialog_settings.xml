@@ -102,7 +102,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -365,8 +366,7 @@
                    android:background="@drawable/folder_item_selector"
                    android:focusable="true"
                    android:focusableInTouchMode="true"
-                   android:clickable="true"
-                   android:layout_marginTop="16dp">
+                   android:clickable="true">
 
                    <TextView
                        android:layout_width="0dp"
@@ -393,13 +393,114 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="400dp"
                 android:orientation="vertical">
+
+            <!-- 色彩饱和度调节 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/color_saturation"
+                        android:textSize="16sp"
+                        android:textColor="@color/dialog_text" />
+
+                    <TextView
+                        android:id="@+id/textSaturationValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="18sp"
+                        android:textColor="@color/netflix_green"
+                        android:textStyle="bold"
+                        android:minWidth="40dp"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekBarSaturation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="5"
+                    android:progress="0"
+                    android:progressTint="@color/netflix_green"
+                    android:thumbTint="@color/netflix_green"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </LinearLayout>
+
+            <!-- 文字锐化调节 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/text_sharpness"
+                        android:textSize="16sp"
+                        android:textColor="@color/dialog_text" />
+
+                    <TextView
+                        android:id="@+id/textSharpnessValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="18sp"
+                        android:textColor="@color/netflix_green"
+                        android:textStyle="bold"
+                        android:minWidth="40dp"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekBarSharpness"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="5"
+                    android:progress="0"
+                    android:progressTint="@color/netflix_green"
+                    android:thumbTint="@color/netflix_green"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </LinearLayout>
 
             <!-- 全屏展示开关 -->
             <LinearLayout
@@ -507,6 +608,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:minHeight="400dp"
                 android:orientation="vertical">
 
                 <!-- 播放所有图片和刷新按钮容器 -->
@@ -551,6 +653,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:minHeight="320dp"
                     android:scrollbars="vertical"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
@@ -566,7 +669,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"

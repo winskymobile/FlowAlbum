@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 网络权限（用于检测更新） -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <!-- 读取外部存储权限（用于访问图片文件） -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />

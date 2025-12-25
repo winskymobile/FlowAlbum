@@ -22,6 +22,8 @@ class SettingsManager(context: Context) {
         private const val KEY_HIGH_QUALITY = "high_quality_mode"
         private const val KEY_HARDWARE_ACCEL = "hardware_acceleration"
         private const val KEY_FIT_SCREEN = "fit_screen"
+        private const val KEY_COLOR_SATURATION = "color_saturation"
+        private const val KEY_TEXT_SHARPNESS = "text_sharpness"
         
         // 默认值
         const val DEFAULT_INTERVAL = 3000L // 默认3秒切换
@@ -170,6 +172,36 @@ class SettingsManager(context: Context) {
     }
 
     /**
+     * 获取色彩饱和度（0到5，默认0）
+     */
+    fun getColorSaturation(): Int {
+        return prefs.getInt(KEY_COLOR_SATURATION, 0)
+    }
+
+    /**
+     * 设置色彩饱和度
+     */
+    fun setColorSaturation(level: Int) {
+        val validLevel = level.coerceIn(0, 5)
+        prefs.edit().putInt(KEY_COLOR_SATURATION, validLevel).apply()
+    }
+
+    /**
+     * 获取文字锐化（0到5，默认0）
+     */
+    fun getTextSharpness(): Int {
+        return prefs.getInt(KEY_TEXT_SHARPNESS, 0)
+    }
+
+    /**
+     * 设置文字锐化
+     */
+    fun setTextSharpness(level: Int) {
+        val validLevel = level.coerceIn(0, 5)
+        prefs.edit().putInt(KEY_TEXT_SHARPNESS, validLevel).apply()
+    }
+
+    /**
      * 重置所有设置为默认值
      */
     fun resetToDefaults() {
@@ -188,6 +220,8 @@ class SettingsManager(context: Context) {
             高质量模式: ${isHighQualityMode()}
             硬件加速: ${isHardwareAcceleration()}
             适应屏幕: ${isFitScreen()}
+            色彩饱和度: ${getColorSaturation()}
+            文字锐化: ${getTextSharpness()}
             文件夹路径: ${getFolderPath() ?: "未设置"}
         """.trimIndent()
     }

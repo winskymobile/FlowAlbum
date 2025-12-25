@@ -252,7 +252,6 @@ class SlideshowActivity : AppCompatActivity() {
         if (photoList.isEmpty() || currentIndex >= photoList.size) return
 
         val photo = photoList[currentIndex]
-        val sharpness = settingsManager.getTextSharpness()
         
         // 构建Glide请求 - 始终使用最高画质
         var requestBuilder = Glide.with(this)
@@ -268,11 +267,6 @@ class SlideshowActivity : AppCompatActivity() {
             requestBuilder = requestBuilder.format(com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888)  // 32位真彩色
         } else {
             requestBuilder = requestBuilder.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩（节省内存）
-        }
-        
-        // 如果锐化等级大于0，应用锐化变换
-        if (sharpness > 0) {
-            requestBuilder = requestBuilder.transform(SharpnessTransformation(sharpness))
         }
         
         requestBuilder.into(imageViewCurrent)
@@ -368,8 +362,6 @@ class SlideshowActivity : AppCompatActivity() {
             settingsManager.getAnimationTypeEnum()
         }
         
-        val sharpness = settingsManager.getTextSharpness()
-        
         // 构建Glide请求 - 始终使用最高画质
         var glideRequest = Glide.with(this)
             .load(photo.uri)
@@ -384,11 +376,6 @@ class SlideshowActivity : AppCompatActivity() {
             glideRequest = glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888)  // 32位真彩色
         } else {
             glideRequest = glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩
-        }
-        
-        // 如果锐化等级大于0，应用锐化变换
-        if (sharpness > 0) {
-            glideRequest = glideRequest.transform(SharpnessTransformation(sharpness))
         }
         
         // 先加载图片
@@ -661,11 +648,6 @@ class SlideshowActivity : AppCompatActivity() {
         val textSaturationValue = dialogView.findViewById<TextView>(R.id.textSaturationValue)
         val seekBarSaturation = dialogView.findViewById<android.widget.SeekBar>(R.id.seekBarSaturation)
         
-        // 获取文字锐化控件
-        val textSharpnessValue = dialogView.findViewById<TextView>(R.id.textSharpnessValue)
-        val seekBarSharpness = dialogView.findViewById<android.widget.SeekBar>(R.id.seekBarSharpness)
-        
-        
         // 获取关闭按钮
         val btnClose = dialogView.findViewById<Button>(R.id.btnClose)
 
@@ -780,13 +762,10 @@ class SlideshowActivity : AppCompatActivity() {
         switchHardwareAccel.isChecked = settingsManager.isHardwareAcceleration()
         switchFitScreen.isChecked = settingsManager.isFitScreen()
         
-        // 初始化色彩饱和度和文字锐化显示
+        // 初始化色彩饱和度显示
         val currentSaturation = settingsManager.getColorSaturation()
-        val currentSharpness = settingsManager.getTextSharpness()
         textSaturationValue.text = currentSaturation.toString()
-        textSharpnessValue.text = currentSharpness.toString()
         seekBarSaturation.progress = currentSaturation
-        seekBarSharpness.progress = currentSharpness
 
         // 色彩饱和度SeekBar监听
         seekBarSaturation.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
@@ -804,49 +783,6 @@ class SlideshowActivity : AppCompatActivity() {
         seekBarSaturation.setOnKeyListener { view, keyCode, event ->
             if (event.action == android.view.KeyEvent.ACTION_DOWN) {
                 val currentProgress = seekBarSaturation.progress
-                when (keyCode) {
-                    android.view.KeyEvent.KEYCODE_DPAD_LEFT -> {
-                        if (currentProgress <= 0) {
-                            // 已经在最小值，消费事件防止焦点跳出
-                            true
-                        } else {
-                            false  // 允许正常调整
-                        }
-                    }
-                    android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                        if (currentProgress >= 5) {
-                            // 已经在最大值，消费事件防止焦点跳出
-                            true
-                        } else {
-                            false  // 允许正常调整
-                        }
-                    }
-                    else -> false
-                }
-            } else {
-                false
-            }
-        }
-        
-        // 文字锐化SeekBar监听 - 锐化需要重新加载图片（使用卷积矩阵处理）
-        seekBarSharpness.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                textSharpnessValue.text = progress.toString()
-                settingsManager.setTextSharpness(progress)
-            }
-            
-            override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
-            
-            override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
-                // 拖动结束时重新加载图片以应用锐化效果
-                displayCurrentPhoto()
-            }
-        })
-        
-        // 文字锐化SeekBar按键监听 - 防止焦点跳出
-        seekBarSharpness.setOnKeyListener { view, keyCode, event ->
-            if (event.action == android.view.KeyEvent.ACTION_DOWN) {
-                val currentProgress = seekBarSharpness.progress
                 when (keyCode) {
                     android.view.KeyEvent.KEYCODE_DPAD_LEFT -> {
                         if (currentProgress <= 0) {
@@ -982,12 +918,12 @@ class SlideshowActivity : AppCompatActivity() {
                     }
                     // 有新版本
                     updateInfo.hasUpdate -> {
-                        val formattedTimestamp = updateChecker.formatTimestamp(updateInfo.latestTimestamp)
                         val message = getString(
                             R.string.update_version_info,
                             updateInfo.latestVersion,
-                            formattedTimestamp,
-                            updateInfo.currentVersion
+                            updateInfo.latestTimestamp,
+                            updateInfo.currentVersion,
+                            updateInfo.currentTimestamp
                         )
                         
                         AlertDialog.Builder(this@SlideshowActivity)
@@ -1040,6 +976,18 @@ class SlideshowActivity : AppCompatActivity() {
         }
 
         dialog.show()
+        
+        // 设置对话框高度为屏幕高度的80%
+        dialog.window?.let { window ->
+            val displayMetrics = resources.displayMetrics
+            val screenHeight = displayMetrics.heightPixels
+            val dialogHeight = (screenHeight * 0.8).toInt()
+            
+            window.setLayout(
+                android.view.WindowManager.LayoutParams.WRAP_CONTENT,
+                dialogHeight
+            )
+        }
     }
 
     /**

@@ -128,7 +128,7 @@ class UpdateChecker(private val context: Context) {
                 currentTimestamp = currentTimestamp,
                 downloadUrl = "",
                 fileName = "",
-                errorMessage = "检测更新失败: ${e.message}"
+                errorMessage = "检测更新失败，网络无响应请稍后重试"
             )
         }
     }
@@ -191,7 +191,7 @@ class UpdateChecker(private val context: Context) {
         }
         
         // 所有尝试都失败
-        throw Exception("检测更新失败，请检查网络连接\n\n详细信息:\n${errors.joinToString("\n")}")
+        throw Exception("检测更新失败，网络无响应请稍后重试")
     }
     
     /**

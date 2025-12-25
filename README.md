@@ -8,7 +8,7 @@
   </p>
   
   <p>
-    <img src="https://img.shields.io/badge/version-1.0.2-blue.svg" alt="Version"/>
+    <img src="https://img.shields.io/badge/version-1.0.3-blue.svg" alt="Version"/>
     <img src="https://img.shields.io/badge/platform-Android%20TV-green.svg" alt="Platform"/>
     <img src="https://img.shields.io/badge/Android-5.0%2B-brightgreen.svg" alt="Android"/>
     <img src="https://img.shields.io/badge/license-MIT-orange.svg" alt="License"/>
@@ -35,7 +35,7 @@
 
 <div align="center">
 
-### 🎉 最新版本：v1.0.2
+### 🎉 最新版本：v1.0.3
 
 📅 *发布日期：2025年12月25日*
 
@@ -43,7 +43,7 @@
 
 | 📦 下载链接 | 📊 文件信息 |
 |:---:|:---:|
-| [![下载 APK](https://img.shields.io/badge/⬇️%20立即下载-FlowAlbum%20v1.0.2-0066CC?style=for-the-badge&logo=android&logoColor=white)](app/release/FlowAlbum_v1.0.2_20251225171708.apk) | 适用于 Android TV / 电视盒子 |
+| [![下载 APK](https://img.shields.io/badge/⬇️%20立即下载-FlowAlbum%20v1.0.3-0066CC?style=for-the-badge&logo=android&logoColor=white)](app/release/FlowAlbum_v1.0.3_20251225231241.apk) | 适用于 Android TV / 电视盒子 |
 
 </div>
 
@@ -69,7 +69,7 @@
 2. 使用数据线或 WiFi ADB 连接电视和电脑
 3. 在电脑上执行命令：
    ```bash
-   adb install FlowAlbum_v1.0.2_20251225171708.apk
+   adb install FlowAlbum_v1.0.3_20251225231241.apk
    ```
 
 </details>
@@ -280,7 +280,19 @@
 ## 🔄 版本历史
 
 <details open>
-<summary><b>🆕 v1.0.2</b> (2025-12-25) - 最新版本</summary>
+<summary><b>🆕 v1.0.3</b> (2025-12-25) - 最新版本</summary>
+
+| 类型 | 更新内容 |
+|:---:|:---|
+| ✨ 新增 | 锐化强度可调节（关闭/轻微/标准/强烈） |
+| 🎨 优化 | 设置界面布局改进 |
+| 🎨 优化 | 图像处理性能提升 |
+| 🐛 修复 | 设置保存稳定性问题 |
+
+</details>
+
+<details>
+<summary><b>v1.0.2</b> (2025-12-25)</summary>
 
 | 类型 | 更新内容 |
 |:---:|:---|

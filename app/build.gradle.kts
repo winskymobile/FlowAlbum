@@ -25,6 +25,16 @@ android {
             )
         }
     }
+    
+    applicationVariants.all {
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val appName = "FlowAlbum"
+            val versionName = defaultConfig.versionName
+            val timestamp = java.text.SimpleDateFormat("yyyyMMddHHmmss").format(java.util.Date())
+            output.outputFileName = "${appName}_v${versionName}_${timestamp}.apk"
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

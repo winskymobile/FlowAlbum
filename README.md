@@ -40,7 +40,7 @@
 
 <br/>
 
-[![下载 APK](https://img.shields.io/badge/📦%20下载-FlowAlbum%20v1.0.2-blue?style=for-the-badge)](app/release/FlowAlbum_v1.0.2_20251225111500.apk)
+[![下载 APK](https://img.shields.io/badge/📦%20下载-FlowAlbum%20v1.0.2-blue?style=for-the-badge)](app/release/FlowAlbum_v1.0.2_20251225141707.apk)
 
 </div>
 
@@ -60,7 +60,7 @@
 2. 使用数据线或 WiFi ADB 连接电视和电脑
 3. 在电脑上执行命令：
    ```bash
-   adb install FlowAlbum_v1.0.2_20251225111500.apk
+   adb install FlowAlbum_v1.0.2_20251225141707.apk
    ```
 
 **方法三：局域网传输**

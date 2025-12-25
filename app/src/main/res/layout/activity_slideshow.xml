@@ -180,15 +180,4 @@
             android:alpha="0.7" />
     </LinearLayout>
 
-    <!-- 图片位置指示器 -->
-    <com.example.flowalbum.IndicatorView
-        android:id="@+id/indicatorView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/layoutControls"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

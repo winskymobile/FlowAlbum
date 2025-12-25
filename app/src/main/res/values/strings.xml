@@ -37,15 +37,15 @@
     <string name="interval_seconds">%d 秒</string>
     <string name="animation_settings">播放设置</string>
     <string name="animation_type">动画类型</string>
-    <string name="enable_animation">启用动画效果</string>
     <string name="random_animation">随机动画</string>
     <string name="display_settings">显示设置</string>
-    <string name="show_indicator">显示指示器</string>
     <string name="auto_play">自动播放</string>
     <string name="high_quality_mode">真彩色模式</string>
     <string name="high_quality_mode_desc">使用32位真彩色</string>
     <string name="hardware_acceleration">硬件加速</string>
     <string name="hardware_acceleration_desc">启用GPU加速以获得更流畅的显示</string>
+    <string name="fit_screen">缩放至全屏</string>
+    <string name="fit_screen_desc">缩放图片以填充屏幕，关闭后保持原始尺寸</string>
     
     <!-- 动画类型 -->
     <string name="animation_fade">淡入淡出</string>
@@ -57,7 +57,6 @@
     <string name="animation_zoom_out">缩小</string>
     <string name="animation_rotate">旋转</string>
     <string name="animation_random">随机效果</string>
-    <string name="animation_none">无动画</string>
     
     <!-- 按钮 -->
     <string name="ok">确定</string>

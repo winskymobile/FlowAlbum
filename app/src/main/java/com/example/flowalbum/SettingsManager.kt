@@ -19,10 +19,9 @@ class SettingsManager(context: Context) {
         private const val KEY_RANDOM_ANIMATION = "random_animation"
         private const val KEY_FOLDER_PATH = "folder_path"
         private const val KEY_AUTO_PLAY = "auto_play"
-        private const val KEY_SHOW_INDICATOR = "show_indicator"
         private const val KEY_HIGH_QUALITY = "high_quality_mode"
         private const val KEY_HARDWARE_ACCEL = "hardware_acceleration"
-        private const val KEY_ANIMATION_ENABLED = "animation_enabled"
+        private const val KEY_FIT_SCREEN = "fit_screen"
         
         // 默认值
         const val DEFAULT_INTERVAL = 3000L // 默认3秒切换
@@ -115,20 +114,6 @@ class SettingsManager(context: Context) {
     }
 
     /**
-     * 是否显示指示器
-     */
-    fun isShowIndicator(): Boolean {
-        return prefs.getBoolean(KEY_SHOW_INDICATOR, false)
-    }
-
-    /**
-     * 设置是否显示指示器
-     */
-    fun setShowIndicator(show: Boolean) {
-        prefs.edit().putBoolean(KEY_SHOW_INDICATOR, show).apply()
-    }
-
-    /**
      * 获取间隔秒数（用于UI显示）
      */
     fun getIntervalSeconds(): Int {
@@ -171,17 +156,17 @@ class SettingsManager(context: Context) {
     }
 
     /**
-     * 是否启用动画效果
+     * 是否启用适应屏幕（缩放至全屏）
      */
-    fun isAnimationEnabled(): Boolean {
-        return prefs.getBoolean(KEY_ANIMATION_ENABLED, true)
+    fun isFitScreen(): Boolean {
+        return prefs.getBoolean(KEY_FIT_SCREEN, true)
     }
 
     /**
-     * 设置是否启用动画效果
+     * 设置是否启用适应屏幕
      */
-    fun setAnimationEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_ANIMATION_ENABLED, enabled).apply()
+    fun setFitScreen(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_FIT_SCREEN, enabled).apply()
     }
 
     /**
@@ -200,9 +185,9 @@ class SettingsManager(context: Context) {
             动画类型: ${getAnimationTypeEnum()}
             随机动画: ${isRandomAnimation()}
             自动播放: ${isAutoPlay()}
-            显示指示器: ${isShowIndicator()}
             高质量模式: ${isHighQualityMode()}
             硬件加速: ${isHardwareAcceleration()}
+            适应屏幕: ${isFitScreen()}
             文件夹路径: ${getFolderPath() ?: "未设置"}
         """.trimIndent()
     }

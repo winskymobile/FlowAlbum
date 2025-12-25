@@ -38,7 +38,6 @@ class SlideshowActivity : AppCompatActivity() {
     private lateinit var btnPlayPause: Button             // 播放/暂停按钮
     private lateinit var btnNext: Button                  // 下一张按钮
     private lateinit var btnSettings: Button              // 设置按钮
-    private lateinit var indicatorView: IndicatorView     // 指示器视图
 
     // 工具类实例
     private lateinit var photoLoader: PhotoLoader         // 图片加载器
@@ -113,10 +112,6 @@ class SlideshowActivity : AppCompatActivity() {
         btnPlayPause = findViewById(R.id.btnPlayPause)
         btnNext = findViewById(R.id.btnNext)
         btnSettings = findViewById(R.id.btnSettings)
-        indicatorView = findViewById(R.id.indicatorView)
-
-        // 设置指示器可见性
-        indicatorView.visibility = if (settingsManager.isShowIndicator()) View.VISIBLE else View.GONE
         
         // 根据设置应用硬件加速
         if (settingsManager.isHardwareAcceleration()) {
@@ -126,6 +121,22 @@ class SlideshowActivity : AppCompatActivity() {
             imageViewCurrent.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
             imageViewNext.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         }
+        
+        // 根据设置应用缩放模式
+        applyScaleType()
+    }
+    
+    /**
+     * 应用图片缩放模式
+     */
+    private fun applyScaleType() {
+        val scaleType = if (settingsManager.isFitScreen()) {
+            ImageView.ScaleType.FIT_CENTER  // 全屏展示（缩放以适应屏幕）
+        } else {
+            ImageView.ScaleType.CENTER_INSIDE  // 保持原始尺寸（不放大，只在需要时缩小）
+        }
+        imageViewCurrent.scaleType = scaleType
+        imageViewNext.scaleType = scaleType
     }
 
     /**
@@ -218,7 +229,6 @@ class SlideshowActivity : AppCompatActivity() {
                     // 显示第一张图片
                     currentIndex = 0
                     displayCurrentPhoto()
-                    updateIndicator()
                     updatePhotoInfo()
 
                     // 根据设置决定是否自动播放（只有当自动播放开关打开且用户未主动暂停时才自动播放）
@@ -317,14 +327,6 @@ class SlideshowActivity : AppCompatActivity() {
 
         val photo = photoList[currentIndex]
         
-        // 如果动画效果被禁用，直接显示图片
-        if (!settingsManager.isAnimationEnabled()) {
-            displayCurrentPhoto()
-            updateIndicator()
-            updatePhotoInfo()
-            return
-        }
-        
         // 获取动画类型
         val animationType = if (settingsManager.isRandomAnimation()) {
             // 随机选择一个动画（不包括RANDOM本身）
@@ -418,8 +420,7 @@ class SlideshowActivity : AppCompatActivity() {
             }
         }
 
-        // 更新指示器和信息
-        updateIndicator()
+        // 更新信息
         updatePhotoInfo()
     }
 
@@ -438,9 +439,8 @@ class SlideshowActivity : AppCompatActivity() {
                     currentIndex = (currentIndex + 1) % photoList.size
                     displayPhotoWithAnimation()
                     
-                    // 计算下一次切换的延迟：间隔时间 + 动画时长
-                    // 动画时长固定为800ms，如果禁用动画则为0
-                    val animationDuration = if (settingsManager.isAnimationEnabled()) 800L else 0L
+                    // 计算下一次切换的延迟：间隔时间 + 动画时长（800ms）
+                    val animationDuration = 800L
                     val nextDelay = settingsManager.getInterval() + animationDuration
                     
                     // 继续下一次调度
@@ -483,15 +483,6 @@ class SlideshowActivity : AppCompatActivity() {
     }
 
     /**
-     * 更新指示器
-     */
-    private fun updateIndicator() {
-        if (settingsManager.isShowIndicator() && indicatorView.visibility == View.VISIBLE) {
-            indicatorView.setIndicator(photoList.size, currentIndex)
-        }
-    }
-
-    /**
      * 更新图片信息文本
      */
     private fun updatePhotoInfo() {
@@ -499,10 +490,7 @@ class SlideshowActivity : AppCompatActivity() {
         val intervalSeconds = settingsManager.getIntervalSeconds()
         
         // 获取当前动画效果名称
-        val animationName = if (!settingsManager.isAnimationEnabled()) {
-            // 动画被禁用
-            getString(R.string.animation_none)
-        } else if (settingsManager.isRandomAnimation()) {
+        val animationName = if (settingsManager.isRandomAnimation()) {
             // 随机动画
             animationHelper.getAnimationName(AnimationHelper.AnimationType.RANDOM)
         } else {
@@ -607,9 +595,7 @@ class SlideshowActivity : AppCompatActivity() {
         val btnDecreaseInterval = dialogView.findViewById<Button>(R.id.btnDecreaseInterval)
         val btnIncreaseInterval = dialogView.findViewById<Button>(R.id.btnIncreaseInterval)
         
-        // 获取动画开关控件
-        val layoutEnableAnimation = dialogView.findViewById<LinearLayout>(R.id.layoutEnableAnimation)
-        val switchEnableAnimation = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchEnableAnimation)
+        // 获取动画设置控件
         val radioGroupAnimation = dialogView.findViewById<RadioGroup>(R.id.radioGroupAnimation)
         
         // 获取动画设置控件 - 作为普通Button而不是RadioButton
@@ -628,14 +614,14 @@ class SlideshowActivity : AppCompatActivity() {
                                       btnZoomIn, btnZoomOut, btnRotate, btnRandom)
         
         // 获取显示设置控件
-        val layoutShowIndicator = dialogView.findViewById<LinearLayout>(R.id.layoutShowIndicator)
         val layoutAutoPlay = dialogView.findViewById<LinearLayout>(R.id.layoutAutoPlay)
         val layoutHighQuality = dialogView.findViewById<LinearLayout>(R.id.layoutHighQuality)
         val layoutHardwareAccel = dialogView.findViewById<LinearLayout>(R.id.layoutHardwareAccel)
-        val switchShowIndicator = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchShowIndicator)
+        val layoutFitScreen = dialogView.findViewById<LinearLayout>(R.id.layoutFitScreen)
         val switchAutoPlay = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchAutoPlay)
         val switchHighQuality = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchHighQuality)
         val switchHardwareAccel = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchHardwareAccel)
+        val switchFitScreen = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchFitScreen)
         
         // 获取关闭按钮
         val btnClose = dialogView.findViewById<Button>(R.id.btnClose)
@@ -746,14 +732,10 @@ class SlideshowActivity : AppCompatActivity() {
         btnRandom.setOnClickListener { selectAnimation(btnRandom, AnimationHelper.AnimationType.RANDOM) }
 
         // 设置开关状态
-        switchShowIndicator.isChecked = settingsManager.isShowIndicator()
         switchAutoPlay.isChecked = settingsManager.isAutoPlay()
         switchHighQuality.isChecked = settingsManager.isHighQualityMode()
         switchHardwareAccel.isChecked = settingsManager.isHardwareAcceleration()
-        switchEnableAnimation.isChecked = settingsManager.isAnimationEnabled()
-        
-        // 根据动画开关状态显示/隐藏动画列表
-        radioGroupAnimation.visibility = if (settingsManager.isAnimationEnabled()) View.VISIBLE else View.GONE
+        switchFitScreen.isChecked = settingsManager.isFitScreen()
 
         // 间隔调整按钮 - 实时保存
         btnDecreaseInterval.setOnClickListener {
@@ -771,22 +753,6 @@ class SlideshowActivity : AppCompatActivity() {
                 textInterval.text = getString(R.string.interval_seconds, currentIntervalSeconds)
                 settingsManager.setIntervalSeconds(currentIntervalSeconds)
                 updatePhotoInfo()
-            }
-        }
-
-        // 显示指示器开关 - 点击整个容器切换状态
-        layoutShowIndicator.setOnClickListener {
-            switchShowIndicator.isChecked = !switchShowIndicator.isChecked
-        }
-        
-        // 显示指示器开关监听 - 实时保存和应用
-        switchShowIndicator.setOnCheckedChangeListener { _, isChecked ->
-            settingsManager.setShowIndicator(isChecked)
-            if (isChecked) {
-                indicatorView.visibility = View.VISIBLE
-                updateIndicator()
-            } else {
-                indicatorView.visibility = View.GONE
             }
         }
 
@@ -828,16 +794,19 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewNext.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
             }
         }
-
-        // 启用动画效果开关 - 点击整个容器切换状态
-        layoutEnableAnimation.setOnClickListener {
-            switchEnableAnimation.isChecked = !switchEnableAnimation.isChecked
+        
+        // 适应屏幕开关 - 点击整个容器切换状态
+        layoutFitScreen.setOnClickListener {
+            switchFitScreen.isChecked = !switchFitScreen.isChecked
         }
         
-        // 启用动画效果开关监听 - 实时保存并显示/隐藏动画列表
-        switchEnableAnimation.setOnCheckedChangeListener { _, isChecked ->
-            settingsManager.setAnimationEnabled(isChecked)
-            radioGroupAnimation.visibility = if (isChecked) View.VISIBLE else View.GONE
+        // 适应屏幕开关监听 - 实时保存并应用
+        switchFitScreen.setOnCheckedChangeListener { _, isChecked ->
+            settingsManager.setFitScreen(isChecked)
+            // 立即应用缩放模式
+            applyScaleType()
+            // 重新显示当前图片以应用新的缩放模式
+            displayCurrentPhoto()
         }
 
         // 本地图片按钮
@@ -999,7 +968,6 @@ class SlideshowActivity : AppCompatActivity() {
         textNoPhotos.visibility = View.VISIBLE
         imageViewCurrent.visibility = View.GONE
         layoutControls.visibility = View.GONE
-        indicatorView.visibility = View.GONE
     }
 
     /**
@@ -1156,7 +1124,6 @@ class SlideshowActivity : AppCompatActivity() {
                     // 显示第一张图片
                     currentIndex = 0
                     displayCurrentPhoto()
-                    updateIndicator()
                     updatePhotoInfo()
                     
                     // 隐藏无图片提示

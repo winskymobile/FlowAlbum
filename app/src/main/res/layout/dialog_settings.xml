@@ -165,43 +165,30 @@
                         android:focusableInTouchMode="true" />
                 </LinearLayout>
 
-                <!-- 启用动画效果开关 -->
+                <!-- 动画效果区块 -->
                 <LinearLayout
-                    android:id="@+id/layoutEnableAnimation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
+                    android:orientation="vertical"
                     android:background="@drawable/folder_item_selector"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:clickable="true"
+                    android:padding="16dp"
                     android:layout_marginBottom="16dp">
 
+                    <!-- 动画效果标题 -->
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/enable_animation"
+                        android:text="@string/animation_type"
                         android:textSize="16sp"
-                        android:textColor="@color/dialog_text" />
+                        android:textColor="@color/dialog_text"
+                        android:layout_marginBottom="12dp" />
 
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchEnableAnimation"
-                        android:layout_width="wrap_content"
+                    <!-- 动画类型宫格布局 - 3列 -->
+                    <RadioGroup
+                        android:id="@+id/radioGroupAnimation"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:theme="@style/FlowAlbum.Switch"
-                        android:focusable="false"
-                        android:clickable="false" />
-                </LinearLayout>
-
-                <!-- 动画类型宫格布局 - 3列 -->
-                <RadioGroup
-                    android:id="@+id/radioGroupAnimation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                        android:orientation="vertical">
 
                 <!-- 第一行 -->
                 <LinearLayout
@@ -363,9 +350,41 @@
                         android:layout_marginStart="8dp"
                         android:focusable="true"
                         android:focusableInTouchMode="true" />
-                </LinearLayout>
-            </RadioGroup>
-            </LinearLayout>
+                    </LinearLayout>
+               </RadioGroup>
+               </LinearLayout>
+
+               <!-- 自动播放开关 -->
+               <LinearLayout
+                   android:id="@+id/layoutAutoPlay"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:gravity="center_vertical"
+                   android:padding="16dp"
+                   android:background="@drawable/folder_item_selector"
+                   android:focusable="true"
+                   android:focusableInTouchMode="true"
+                   android:clickable="true"
+                   android:layout_marginTop="16dp">
+
+                   <TextView
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="1"
+                       android:text="@string/auto_play"
+                       android:textSize="16sp"
+                       android:textColor="@color/dialog_text" />
+
+                   <androidx.appcompat.widget.SwitchCompat
+                       android:id="@+id/switchAutoPlay"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:theme="@style/FlowAlbum.Switch"
+                       android:focusable="false"
+                       android:clickable="false" />
+               </LinearLayout>
+           </LinearLayout>
         </ScrollView>
 
         <!-- 显示设置页面 -->
@@ -381,6 +400,37 @@
                 android:layout_height="wrap_content"
                 android:minHeight="400dp"
                 android:orientation="vertical">
+
+            <!-- 全屏展示开关 -->
+            <LinearLayout
+                android:id="@+id/layoutFitScreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@drawable/folder_item_selector"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/fit_screen"
+                    android:textSize="16sp"
+                    android:textColor="@color/dialog_text" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchFitScreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/FlowAlbum.Switch"
+                    android:focusable="false"
+                    android:clickable="false" />
+            </LinearLayout>
 
             <!-- 高质量模式开关 -->
             <LinearLayout
@@ -444,66 +494,6 @@
                     android:clickable="false" />
             </LinearLayout>
 
-            <!-- 显示指示器开关 -->
-            <LinearLayout
-                android:id="@+id/layoutShowIndicator"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp"
-                android:background="@drawable/folder_item_selector"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:clickable="true"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/show_indicator"
-                    android:textSize="16sp"
-                    android:textColor="@color/dialog_text" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchShowIndicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/FlowAlbum.Switch"
-                    android:focusable="false"
-                    android:clickable="false" />
-            </LinearLayout>
-
-            <!-- 自动播放开关 -->
-            <LinearLayout
-                android:id="@+id/layoutAutoPlay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp"
-                android:background="@drawable/folder_item_selector"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:clickable="true">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/auto_play"
-                    android:textSize="16sp"
-                    android:textColor="@color/dialog_text" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchAutoPlay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/FlowAlbum.Switch"
-                    android:focusable="false"
-                    android:clickable="false" />
-            </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

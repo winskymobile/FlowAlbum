@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -31,7 +34,7 @@ android {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val appName = "FlowAlbum"
             val versionName = defaultConfig.versionName
-            val timestamp = java.text.SimpleDateFormat("yyyyMMddHHmmss").format(java.util.Date())
+            val timestamp = SimpleDateFormat("yyyyMMddHHmmss").format(Date())
             output.outputFileName = "${appName}_v${versionName}_${timestamp}.apk"
         }
     }

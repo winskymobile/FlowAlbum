@@ -371,16 +371,49 @@ class UpdateChecker(private val context: Context) {
     }
     
     /**
+     * 从代理站 URL 中提取真实的 GitHub 下载地址
+     * @param proxyUrl 代理站 URL
+     * @return 真实的 GitHub 下载地址，如果不是代理站 URL 则返回原 URL
+     */
+    private fun extractRealUrl(proxyUrl: String): String {
+        return try {
+            // 检查是否是代理站 URL
+            val proxyPrefixes = listOf(
+                "https://gh-proxy.com/",
+                "https://cors.isteed.cc/",
+                "https://ghfast.top/"
+            )
+            
+            for (prefix in proxyPrefixes) {
+                if (proxyUrl.startsWith(prefix)) {
+                    // 移除代理站前缀，返回真实的 GitHub URL
+                    return proxyUrl.substring(prefix.length)
+                }
+            }
+            
+            // 不是代理站 URL，直接返回原 URL
+            proxyUrl
+        } catch (e: Exception) {
+            proxyUrl
+        }
+    }
+    
+    /**
      * 使用系统 DownloadManager 下载 APK
-     * @param downloadUrl 下载链接
+     * 自动处理代理站 URL，转换为真实的 GitHub 下载地址
+     * @param downloadUrl 下载链接（可以是代理站链接或直接链接）
      * @param fileName APK 文件名
      * @return 下载任务 ID，如果失败返回 -1
      */
     fun downloadApk(downloadUrl: String, fileName: String): Long {
         return try {
+            // 提取真实的 GitHub 下载地址（如果是代理站 URL）
+            val realUrl = extractRealUrl(downloadUrl)
+            
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             
-            val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
+            // 使用真实的 GitHub URL 创建下载请求
+            val request = DownloadManager.Request(Uri.parse(realUrl)).apply {
                 // 设置标题和描述
                 setTitle("FlowAlbum 更新")
                 setDescription("正在下载 $fileName")
@@ -429,10 +462,12 @@ class UpdateChecker(private val context: Context) {
                 val statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                 val downloadedBytesIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
                 val totalBytesIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+                val reasonIndex = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
                 
                 val status = cursor.getInt(statusIndex)
                 val downloadedBytes = cursor.getLong(downloadedBytesIndex)
                 val totalBytes = cursor.getLong(totalBytesIndex)
+                val reason = cursor.getInt(reasonIndex)
                 
                 val progress = if (totalBytes > 0) {
                     ((downloadedBytes * 100) / totalBytes).toInt()
@@ -443,9 +478,30 @@ class UpdateChecker(private val context: Context) {
                 val statusText = when (status) {
                     DownloadManager.STATUS_PENDING -> "等待下载"
                     DownloadManager.STATUS_RUNNING -> "正在下载 $progress%"
-                    DownloadManager.STATUS_PAUSED -> "下载已暂停"
+                    DownloadManager.STATUS_PAUSED -> {
+                        val pauseReason = when (reason) {
+                            DownloadManager.PAUSED_QUEUED_FOR_WIFI -> "等待WiFi连接"
+                            DownloadManager.PAUSED_WAITING_TO_RETRY -> "等待重试"
+                            DownloadManager.PAUSED_WAITING_FOR_NETWORK -> "等待网络连接"
+                            else -> "下载已暂停"
+                        }
+                        pauseReason
+                    }
                     DownloadManager.STATUS_SUCCESSFUL -> "下载完成"
-                    DownloadManager.STATUS_FAILED -> "下载失败"
+                    DownloadManager.STATUS_FAILED -> {
+                        val failReason = when (reason) {
+                            DownloadManager.ERROR_CANNOT_RESUME -> "无法恢复下载"
+                            DownloadManager.ERROR_DEVICE_NOT_FOUND -> "未找到存储设备"
+                            DownloadManager.ERROR_FILE_ALREADY_EXISTS -> "文件已存在"
+                            DownloadManager.ERROR_FILE_ERROR -> "文件错误"
+                            DownloadManager.ERROR_HTTP_DATA_ERROR -> "HTTP数据错误"
+                            DownloadManager.ERROR_INSUFFICIENT_SPACE -> "存储空间不足"
+                            DownloadManager.ERROR_TOO_MANY_REDIRECTS -> "重定向次数过多"
+                            DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> "HTTP错误"
+                            else -> "下载失败(代码:$reason)"
+                        }
+                        failReason
+                    }
                     else -> "未知状态"
                 }
                 

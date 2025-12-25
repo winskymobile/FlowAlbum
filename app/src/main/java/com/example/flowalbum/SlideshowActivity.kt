@@ -931,7 +931,7 @@ class SlideshowActivity : AppCompatActivity() {
                             .setMessage(message)
                             .setPositiveButton(getString(R.string.update_download)) { dialog, _ ->
                                 dialog.dismiss()
-                                // 使用内置下载功能
+                                // 使用内置下载功能（自动处理代理站链接）
                                 startDownload(updateChecker, updateInfo.downloadUrl, updateInfo.fileName)
                             }
                             .setNegativeButton(getString(R.string.update_later)) { dialog, _ ->

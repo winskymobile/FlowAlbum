@@ -508,62 +508,67 @@
         </ScrollView>
 
         <!-- 选择图片页面 -->
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/pagePhotos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:visibility="gone">
 
-            <!-- 播放所有图片和刷新按钮容器 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <!-- 本地图片按钮 -->
-                <Button
-                    android:id="@+id/btnLocalPhotos"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="@string/local_photos"
-                    android:textSize="16sp"
-                    android:textColor="@drawable/button_text_selector"
-                    android:background="@drawable/button_selector"
-                    android:layout_marginEnd="8dp"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true" />
+                <!-- 播放所有图片和刷新按钮容器 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
 
-                <!-- 外置设备按钮 -->
-                <Button
-                    android:id="@+id/btnExternalDevices"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    <!-- 本地图片按钮 -->
+                    <Button
+                        android:id="@+id/btnLocalPhotos"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:text="@string/local_photos"
+                        android:textSize="16sp"
+                        android:textColor="@drawable/button_text_selector"
+                        android:background="@drawable/button_selector"
+                        android:layout_marginEnd="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+
+                    <!-- 外置设备按钮 -->
+                    <Button
+                        android:id="@+id/btnExternalDevices"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:text="@string/external_devices"
+                        android:textSize="16sp"
+                        android:textColor="@drawable/button_text_selector"
+                        android:background="@drawable/button_selector"
+                        android:layout_marginStart="8dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+
+                <!-- 文件夹宫格列表 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewFolders"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="@string/external_devices"
-                    android:textSize="16sp"
-                    android:textColor="@drawable/button_text_selector"
-                    android:background="@drawable/button_selector"
-                    android:layout_marginStart="8dp"
+                    android:scrollbars="vertical"
                     android:focusable="true"
-                    android:focusableInTouchMode="true" />
+                    android:focusableInTouchMode="true"
+                    android:clipToPadding="false"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp" />
             </LinearLayout>
-
-            <!-- 文件夹宫格列表 -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewFolders"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:scrollbars="vertical"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:clipToPadding="false"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp" />
-        </LinearLayout>
+        </FrameLayout>
 
         <!-- 关于页面 -->
         <ScrollView

@@ -645,6 +645,12 @@ class SlideshowActivity : AppCompatActivity() {
         val btnExternalDevices = dialogView.findViewById<Button>(R.id.btnExternalDevices)
         val recyclerViewFolders = dialogView.findViewById<RecyclerView>(R.id.recyclerViewFolders)
         
+        // 预先初始化RecyclerView，避免切换tab时闪烁
+        val gridLayoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 3)
+        recyclerViewFolders.layoutManager = gridLayoutManager
+        val spacing = resources.getDimensionPixelSize(R.dimen.grid_spacing)
+        recyclerViewFolders.addItemDecoration(GridSpacingItemDecoration(3, spacing, true))
+        
         // 获取关于页面控件
         val textVersion = dialogView.findViewById<TextView>(R.id.textVersion)
         val btnCheckUpdate = dialogView.findViewById<Button>(R.id.btnCheckUpdate)
@@ -885,18 +891,7 @@ class SlideshowActivity : AppCompatActivity() {
         parentDialog: AlertDialog,
         wasPlaying: Boolean
     ) {
-        // 设置RecyclerView为宫格布局（3列）
-        val gridLayoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 3)
-        recyclerView.layoutManager = gridLayoutManager
-        
-        // 添加宫格间距装饰器
-        val spacing = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-        // 只在第一次添加装饰器，避免重复添加
-        if (recyclerView.itemDecorationCount == 0) {
-            recyclerView.addItemDecoration(GridSpacingItemDecoration(3, spacing, true))
-        }
-        
-        // 显示加载提示
+        // 显示加载提示（RecyclerView已在对话框创建时初始化）
         val progressDialog = AlertDialog.Builder(this)
             .setMessage(getString(R.string.loading_local_folders))
             .setCancelable(false)
@@ -946,18 +941,7 @@ class SlideshowActivity : AppCompatActivity() {
         parentDialog: AlertDialog,
         wasPlaying: Boolean
     ) {
-        // 设置RecyclerView为宫格布局（3列）
-        val gridLayoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 3)
-        recyclerView.layoutManager = gridLayoutManager
-        
-        // 添加宫格间距装饰器
-        val spacing = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-        // 只在第一次添加装饰器，避免重复添加
-        if (recyclerView.itemDecorationCount == 0) {
-            recyclerView.addItemDecoration(GridSpacingItemDecoration(3, spacing, true))
-        }
-        
-        // 显示加载提示
+        // 显示加载提示（RecyclerView已在对话框创建时初始化）
         val progressDialog = AlertDialog.Builder(this)
             .setMessage(getString(R.string.loading_external_devices))
             .setCancelable(false)

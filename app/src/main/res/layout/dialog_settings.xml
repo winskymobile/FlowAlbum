@@ -90,12 +90,13 @@
         android:background="@color/netflix_green"
         android:layout_marginBottom="24dp" />
 
-    <!-- 内容区域容器 -->
+    <!-- 内容区域容器 - 固定高度确保所有tab一致 -->
     <FrameLayout
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:minHeight="400dp">
 
         <!-- 动画效果设置页面 - 可滚动 -->
         <ScrollView

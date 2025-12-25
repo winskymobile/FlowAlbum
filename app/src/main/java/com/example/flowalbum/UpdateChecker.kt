@@ -176,7 +176,7 @@ class UpdateChecker(private val context: Context) {
         for (proxyPrefix in PROXY_PREFIXES) {
             try {
                 val apiUrl = proxyPrefix + GITHUB_API_PATH
-                val result = tryFetchFromUrl(apiUrl)
+                val result = tryFetchFromUrl(apiUrl, proxyPrefix)
                 
                 // 成功获取，记录当前使用的代理前缀
                 successfulProxyPrefix = proxyPrefix
@@ -197,7 +197,7 @@ class UpdateChecker(private val context: Context) {
     /**
      * 尝试从指定URL获取APK列表
      */
-    private fun tryFetchFromUrl(apiUrl: String): List<ApkInfo> {
+    private fun tryFetchFromUrl(apiUrl: String, proxyPrefix: String): List<ApkInfo> {
         val url = URL(apiUrl)
         val connection = url.openConnection() as HttpURLConnection
         
@@ -214,7 +214,7 @@ class UpdateChecker(private val context: Context) {
             }
             
             val response = connection.inputStream.bufferedReader().use { it.readText() }
-            return parseGitHubResponse(response)
+            return parseGitHubResponse(response, proxyPrefix)
         } finally {
             connection.disconnect()
         }
@@ -223,7 +223,7 @@ class UpdateChecker(private val context: Context) {
     /**
      * 解析GitHub API响应
      */
-    private fun parseGitHubResponse(response: String): List<ApkInfo> {
+    private fun parseGitHubResponse(response: String, proxyPrefix: String): List<ApkInfo> {
         val apkList = mutableListOf<ApkInfo>()
         
         try {
@@ -240,8 +240,17 @@ class UpdateChecker(private val context: Context) {
                     if (matchResult != null) {
                         val version = matchResult.groupValues[1]
                         val timestamp = matchResult.groupValues[2]
-                        // 使用成功的代理前缀生成下载URL
-                        val downloadUrl = successfulProxyPrefix + GITHUB_RAW_PATH + name
+                        
+                        // 优先使用 GitHub API 返回的 download_url（这是官方下载地址）
+                        // 如果使用了代理站，则在 download_url 前添加代理前缀
+                        val apiDownloadUrl = item.optString("download_url", "")
+                        val downloadUrl = if (apiDownloadUrl.isNotEmpty()) {
+                            // 使用 API 返回的下载地址，并添加代理前缀
+                            proxyPrefix + apiDownloadUrl
+                        } else {
+                            // 备用方案：手动构建下载URL
+                            proxyPrefix + GITHUB_RAW_PATH + name
+                        }
                         
                         apkList.add(ApkInfo(
                             fileName = name,

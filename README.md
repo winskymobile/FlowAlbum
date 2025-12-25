@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="app/src/main/res/drawable/flow_album.png" alt="FlowAlbum Logo" width="200"/>
+</p>
+
 # FlowAlbum - Android TV 智能相册
 
 一款专为 Android TV 打造的智能相册应用，让您在大屏电视上优雅地欣赏珍贵照片。

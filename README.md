@@ -1,17 +1,50 @@
-<p align="center">
-  <img src="app/src/main/res/drawable/flow_album.png" alt="FlowAlbum Logo" width="200"/>
-</p>
+<div align="center">
+  <img src="app/src/main/res/drawable/flow_album.png" alt="FlowAlbum Logo" width="180"/>
+  
+  <h1>FlowAlbum</h1>
+  
+  <p>
+    <strong>Android TV 智能相册 · 让美好回忆在大屏幕上精彩呈现</strong>
+  </p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/version-1.0.2-blue.svg" alt="Version"/>
+    <img src="https://img.shields.io/badge/platform-Android%20TV-green.svg" alt="Platform"/>
+    <img src="https://img.shields.io/badge/Android-5.0%2B-brightgreen.svg" alt="Android"/>
+    <img src="https://img.shields.io/badge/license-MIT-orange.svg" alt="License"/>
+  </p>
+  
+  <p>
+    一款专为 Android TV 打造的智能相册应用<br/>
+    支持自动播放 · 8种精美动画 · 完美遥控器适配
+  </p>
+  
+  <p>
+    <a href="#-下载安装"><strong>📥 立即下载</strong></a> •
+    <a href="#-功能介绍"><strong>✨ 功能特性</strong></a> •
+    <a href="#-快速开始"><strong>🚀 快速开始</strong></a> •
+    <a href="#-常见问题"><strong>❓ 常见问题</strong></a>
+  </p>
+</div>
 
-# FlowAlbum - Android TV 智能相册
+<br/>
 
-一款专为 Android TV 打造的智能相册应用，让您在大屏电视上优雅地欣赏珍贵照片。
+---
 
 ## 📥 下载安装
 
-### 直接下载 APK
-**最新版本：v1.0.2** (2025-12-25)
+<div align="center">
 
-[📦 点击下载 FlowAlbum_v1.0.2.apk](app/release/FlowAlbum_v1.0.2_20251225111500.apk)
+### 🎉 最新版本：v1.0.2
+*发布日期：2025-12-25*
+
+<br/>
+
+[![下载 APK](https://img.shields.io/badge/📦%20下载-FlowAlbum%20v1.0.2-blue?style=for-the-badge)](app/release/FlowAlbum_v1.0.2_20251225111500.apk)
+
+</div>
+
+<br/>
 
 ### 安装方法
 
@@ -35,37 +68,69 @@
 2. 从手机或电脑传输 APK 到电视
 3. 在电视上点击安装
 
-### 系统要求
+### 📋 系统要求
+
+<table>
+<tr>
+<td>
+
+**✅ 操作系统**
 - Android 5.0 或更高版本
-- 支持 Android TV、投影仪、电视盒子等大屏设备
-- 需要存储权限以访问设备上的照片
+
+</td>
+<td>
+
+**✅ 支持设备**
+- Android TV 智能电视
+- 电视盒子、智能投影仪
+
+</td>
+<td>
+
+**✅ 权限需求**
+- 存储权限（访问照片）
+
+</td>
+</tr>
+</table>
 
 ## ✨ 功能介绍
 
+<table>
+<tr>
+<td width="50%">
+
 ### 🎬 自动播放
-- 照片自动轮播，无需手动操作
-- 切换间隔可自由调节（1-30秒）
-- 支持暂停/继续播放
+- ✅ 照片自动轮播，无需手动操作
+- ✅ 切换间隔可自由调节（1-30秒）
+- ✅ 支持暂停/继续播放
 
 ### 🎨 精美动画
-8种精心设计的切换动画：
-- **淡入淡出** - 经典优雅的过渡效果
-- **滑动切换** - 左滑、右滑、上滑、下滑
-- **缩放效果** - 放大或缩小进入
-- **旋转切换** - 动感的旋转过渡
-- **随机模式** - 每次切换随机选择动画，充满惊喜
+**8种精心设计的切换动画：**
+- 💫 **淡入淡出** - 经典优雅
+- 🔄 **滑动切换** - 四向滑动
+- 🔍 **缩放效果** - 动态缩放
+- 🌀 **旋转切换** - 动感旋转
+- 🎲 **随机模式** - 充满惊喜
+
+</td>
+<td width="50%">
 
 ### 🎮 遥控器操作
-完美适配 Android TV 遥控器：
-- **↑ ↓** 方向键 - 显示/隐藏控制栏
-- **确认键** - 播放/暂停
-- **菜单键** - 打开设置
-- **返回键** - 退出应用
+**完美适配 Android TV 遥控器：**
+- ⬆️ **↑ ↓ 方向键** - 显示/隐藏控制栏
+- ✅ **确认键** - 播放/暂停
+- ⚙️ **菜单键** - 打开设置
+- ⬅️ **返回键** - 退出应用
 
 ### 📍 智能指示器
-- 显示当前照片位置和总数
-- 圆点指示器直观展示进度
-- 支持开启/关闭
+- 📊 显示当前照片位置和总数
+- ⚫ 圆点指示器直观展示进度
+- 🔘 支持开启/关闭显示
+
+</td>
+</tr>
+</table>
 
 ## 🚀 快速开始
 
@@ -175,29 +240,80 @@
 
 ## 🔄 版本更新
 
-### v1.0.2 (2024-12-25)
+<details open>
+<summary><b>v1.0.2</b> (2024-12-25) - 最新版本</summary>
+
 - ✨ 优化照片加载性能
 - 🐛 修复部分设备权限问题
 - 🎨 改进动画流畅度
 - 📝 完善用户指引
 
-### v1.0.0 (2024-12-19)
+</details>
+
+<details>
+<summary><b>v1.0.0</b> (2024-12-19) - 首次发布</summary>
+
 - 🎉 首次发布
 - ✅ 基础幻灯片播放功能
 - ✅ 8种动画效果
 - ✅ 完整遥控器支持
 - ✅ 设置管理系统
 
+</details>
+
 ## 📄 隐私说明
 
-本应用：
-- ✅ 仅读取本地照片，不上传任何数据
-- ✅ 不收集用户个人信息
-- ✅ 不包含任何广告
-- ✅ 不需要网络连接
-- ✅ 完全离线运行
+<div align="center">
 
-您的照片隐私完全受保护！
+### 🔒 您的隐私，我们的承诺
+
+</div>
+
+<table>
+<tr>
+<td align="center" width="20%">
+
+**🔐**<br/>
+仅读取本地照片<br/>
+不上传任何数据
+
+</td>
+<td align="center" width="20%">
+
+**🙈**<br/>
+不收集个人信息<br/>
+完全匿名使用
+
+</td>
+<td align="center" width="20%">
+
+**🚫**<br/>
+零广告骚扰<br/>
+纯净使用体验
+
+</td>
+<td align="center" width="20%">
+
+**✈️**<br/>
+无需网络连接<br/>
+完全离线运行
+
+</td>
+<td align="center" width="20%">
+
+**✅**<br/>
+开源透明<br/>
+安全可信赖
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+**您的照片隐私完全受保护！** 🛡️
+
+</div>
 
 ## 🛠️ 技术支持
 
@@ -216,23 +332,53 @@
 
 ## 📜 开源信息
 
-本项目基于以下开源技术构建：
-- Kotlin - 现代化 Android 开发语言
-- Glide - 高性能图片加载库
-- AndroidX - Android 官方支持库
-- Leanback - Android TV UI 框架
+<div align="center">
 
-## ⭐ 致谢
+**本项目基于以下开源技术构建**
 
-感谢您选择 FlowAlbum！
+</div>
 
-如果觉得好用，欢迎：
-- 给项目点个 Star ⭐
-- 分享给更多朋友
-- 提供宝贵建议
+<table>
+<tr>
+<td align="center">
+<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white" alt="Kotlin"/><br/>
+现代化 Android 开发语言
+</td>
+<td align="center">
+<img src="https://img.shields.io/badge/Glide-4285F4?style=flat&logo=google&logoColor=white" alt="Glide"/><br/>
+高性能图片加载库
+</td>
+<td align="center">
+<img src="https://img.shields.io/badge/AndroidX-3DDC84?style=flat&logo=android&logoColor=white" alt="AndroidX"/><br/>
+Android 官方支持库
+</td>
+<td align="center">
+<img src="https://img.shields.io/badge/Leanback-FF6F00?style=flat&logo=android&logoColor=white" alt="Leanback"/><br/>
+Android TV UI 框架
+</td>
+</tr>
+</table>
 
 ---
 
-**让珍贵回忆在大屏幕上精彩呈现！** 📺✨
+<div align="center">
+
+## ⭐ 致谢
+
+**感谢您选择 FlowAlbum！**
+
+如果觉得好用，欢迎：
+
+🌟 **给项目点个 Star** · 📢 **分享给更多朋友** · 💡 **提供宝贵建议**
+
+<br/>
+
+### 让珍贵回忆在大屏幕上精彩呈现！ 📺✨
 
 *FlowAlbum - 为美好时光而生*
+
+<br/>
+
+<sub>Made with ❤️ for Android TV</sub>
+
+</div>

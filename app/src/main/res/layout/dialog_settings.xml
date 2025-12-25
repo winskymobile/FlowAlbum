@@ -3,10 +3,13 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="900dp"
-    android:layout_height="wrap_content"
+    android:layout_height="600dp"
     android:orientation="vertical"
     android:background="@color/dialog_background"
-    android:padding="32dp">
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:paddingTop="32dp"
+    android:paddingBottom="16dp">
 
     <!-- Tab标签栏 -->
     <LinearLayout
@@ -22,7 +25,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/animation_settings"
-            android:textSize="15sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:textColor="@drawable/tab_text_selector"
             android:gravity="center"
             android:background="@drawable/tab_selector"
@@ -36,7 +40,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/display_settings"
-            android:textSize="15sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:textColor="@drawable/tab_text_selector"
             android:gravity="center"
             android:background="@drawable/tab_selector"
@@ -51,7 +56,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/select_photos"
-            android:textSize="15sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:textColor="@drawable/tab_text_selector"
             android:gravity="center"
             android:background="@drawable/tab_selector"
@@ -66,7 +72,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/about"
-            android:textSize="15sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:textColor="@drawable/tab_text_selector"
             android:gravity="center"
             android:background="@drawable/tab_selector"
@@ -86,20 +93,21 @@
     <FrameLayout
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="420dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <!-- 动画效果设置页面 - 可滚动 -->
         <ScrollView
             android:id="@+id/pageAnimation"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="match_parent"
             android:visibility="visible"
             android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="400dp"
                 android:orientation="vertical">
 
                 <!-- 切换间隔时间设置 -->
@@ -361,12 +369,18 @@
         </ScrollView>
 
         <!-- 显示设置页面 -->
-        <LinearLayout
+        <ScrollView
             android:id="@+id/pageDisplay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="400dp"
+                android:orientation="vertical">
 
             <!-- 高质量模式开关 -->
             <LinearLayout
@@ -490,13 +504,14 @@
                     android:focusable="false"
                     android:clickable="false" />
             </LinearLayout>
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <!-- 选择图片页面 -->
         <LinearLayout
             android:id="@+id/pagePhotos"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -540,7 +555,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewFolders"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:scrollbars="vertical"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -553,13 +569,14 @@
         <ScrollView
             android:id="@+id/pageAbout"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="match_parent"
             android:visibility="gone"
             android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="400dp"
                 android:orientation="vertical"
                 android:padding="16dp"
                 android:gravity="center">
@@ -617,8 +634,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/dialog_divider"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp" />
 
     <!-- 底部关闭按钮 -->
     <Button
@@ -627,8 +644,8 @@
         android:layout_height="56dp"
         android:text="@string/close"
         android:textSize="16sp"
-        android:textColor="@drawable/button_text_selector"
-        android:background="@drawable/button_selector"
+        android:textColor="@drawable/button_borderless_text_selector"
+        android:background="@drawable/button_borderless_selector"
         android:focusable="true"
         android:focusableInTouchMode="true" />
 

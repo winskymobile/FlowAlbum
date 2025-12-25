@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 无边框按钮文字颜色选择器 - 聚焦时绿色 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 焦点状态 - 绿色文字 -->
+    <item android:state_focused="true" android:color="@color/netflix_green" />
+    
+    <!-- 按下状态 - 绿色文字 -->
+    <item android:state_pressed="true" android:color="@color/netflix_green" />
+    
+    <!-- 正常状态 - 普通文字颜色 -->
+    <item android:color="@color/button_text" />
+</selector>

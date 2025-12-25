@@ -582,12 +582,9 @@ class SlideshowActivity : AppCompatActivity() {
      * 显示设置对话框 - Tab形式，实时保存
      */
     private fun showSettingsDialog() {
-        // 暂停播放
+        // 保存播放状态，但不暂停（如果自动播放开关打开）
         val wasPlaying = isPlaying
-        if (isPlaying) {
-            stopSlideshow()
-        }
-
+        
         val dialogView = layoutInflater.inflate(R.layout.dialog_settings, null)
         val dialog = AlertDialog.Builder(this, R.style.Theme_FlowAlbum_Dialog)
             .setView(dialogView)
@@ -874,10 +871,7 @@ class SlideshowActivity : AppCompatActivity() {
         // 关闭按钮
         btnClose.setOnClickListener {
             dialog.dismiss()
-            // 根据自动播放设置决定是否恢复播放（只有当自动播放开关打开且用户未主动暂停时才自动播放）
-            if (settingsManager.isAutoPlay() && !userPaused && photoList.isNotEmpty() && !isPlaying) {
-                startSlideshow()
-            }
+            // 对话框关闭后不需要特殊处理，因为打开时没有暂停播放
         }
 
         dialog.show()

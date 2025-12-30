@@ -378,11 +378,189 @@ class SlideshowActivity : AppCompatActivity() {
             glideRequest = glideRequest.format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)  // 16位色彩
         }
         
-        // 先加载图片
-        glideRequest.into(imageViewCurrent)
+        // 根据动画类型决定是否使用双ImageView连续动画
+        when (animationType) {
+            AnimationHelper.AnimationType.SLIDE_LEFT,
+            AnimationHelper.AnimationType.SLIDE_RIGHT,
+            AnimationHelper.AnimationType.SLIDE_UP,
+            AnimationHelper.AnimationType.SLIDE_DOWN -> {
+                // 滑动动画：使用双ImageView实现连续效果
+                applyContinuousSlideAnimation(photo, animationType, glideRequest)
+            }
+            else -> {
+                // 其他动画：使用单ImageView
+                applySingleImageAnimation(photo, animationType, glideRequest)
+            }
+        }
+
+        // 更新信息
+        updatePhotoInfo()
+    }
+    
+    /**
+     * 应用连续滑动动画（双ImageView）
+     */
+    private fun applyContinuousSlideAnimation(
+        photo: Photo,
+        animationType: AnimationHelper.AnimationType,
+        glideRequest: com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable>
+    ) {
+        // 将新图片加载到 imageViewNext
+        glideRequest.into(imageViewNext)
+        applySaturationEffect(imageViewNext)
         
-        // 应用色彩饱和度效果
+        // 确保两个 ImageView 都可见
+        imageViewCurrent.visibility = View.VISIBLE
+        imageViewNext.visibility = View.VISIBLE
+        
+        // 重置 imageViewNext 的属性
+        imageViewNext.alpha = 1f
+        imageViewNext.scaleX = 1f
+        imageViewNext.scaleY = 1f
+        imageViewNext.rotation = 0f
+        
+        // 设置初始位置
+        val width = imageViewCurrent.width.toFloat()
+        val height = imageViewCurrent.height.toFloat()
+        
+        when (animationType) {
+            AnimationHelper.AnimationType.SLIDE_LEFT -> {
+                // 左滑：新图从右边进入，旧图从左边退出
+                imageViewNext.translationX = width
+                imageViewNext.translationY = 0f
+                imageViewCurrent.translationX = 0f
+                imageViewCurrent.translationY = 0f
+                
+                // 同时移动两张图片
+                imageViewNext.animate()
+                    .translationX(0f)
+                    .setDuration(800)
+                    .withEndAction {
+                        finishSlideAnimation()
+                    }
+                    .start()
+                    
+                imageViewCurrent.animate()
+                    .translationX(-width)
+                    .setDuration(800)
+                    .start()
+            }
+            AnimationHelper.AnimationType.SLIDE_RIGHT -> {
+                // 右滑：新图从左边进入，旧图从右边退出
+                imageViewNext.translationX = -width
+                imageViewNext.translationY = 0f
+                imageViewCurrent.translationX = 0f
+                imageViewCurrent.translationY = 0f
+                
+                imageViewNext.animate()
+                    .translationX(0f)
+                    .setDuration(800)
+                    .withEndAction {
+                        finishSlideAnimation()
+                    }
+                    .start()
+                    
+                imageViewCurrent.animate()
+                    .translationX(width)
+                    .setDuration(800)
+                    .start()
+            }
+            AnimationHelper.AnimationType.SLIDE_UP -> {
+                // 上滑：新图从下边进入，旧图从上边退出
+                imageViewNext.translationX = 0f
+                imageViewNext.translationY = height
+                imageViewCurrent.translationX = 0f
+                imageViewCurrent.translationY = 0f
+                
+                imageViewNext.animate()
+                    .translationY(0f)
+                    .setDuration(800)
+                    .withEndAction {
+                        finishSlideAnimation()
+                    }
+                    .start()
+                    
+                imageViewCurrent.animate()
+                    .translationY(-height)
+                    .setDuration(800)
+                    .start()
+            }
+            AnimationHelper.AnimationType.SLIDE_DOWN -> {
+                // 下滑：新图从上边进入，旧图从下边退出
+                imageViewNext.translationX = 0f
+                imageViewNext.translationY = -height
+                imageViewCurrent.translationX = 0f
+                imageViewCurrent.translationY = 0f
+                
+                imageViewNext.animate()
+                    .translationY(0f)
+                    .setDuration(800)
+                    .withEndAction {
+                        finishSlideAnimation()
+                    }
+                    .start()
+                    
+                imageViewCurrent.animate()
+                    .translationY(height)
+                    .setDuration(800)
+                    .start()
+            }
+            else -> {
+                // 不应该到达这里
+                finishSlideAnimation()
+            }
+        }
+    }
+    
+    /**
+     * 完成滑动动画后的处理
+     */
+    private fun finishSlideAnimation() {
+        // 交换两个 ImageView 的引用
+        val temp = imageViewCurrent
+        imageViewCurrent = imageViewNext
+        imageViewNext = temp
+        
+        // 重置新的 imageViewCurrent 的位置（现在是原来的 imageViewNext）
+        imageViewCurrent.translationX = 0f
+        imageViewCurrent.translationY = 0f
+        imageViewCurrent.scaleX = 1f
+        imageViewCurrent.scaleY = 1f
+        imageViewCurrent.rotation = 0f
+        imageViewCurrent.alpha = 1f
+        imageViewCurrent.visibility = View.VISIBLE
+        
+        // 隐藏新的 imageViewNext（原来的 imageViewCurrent）
+        imageViewNext.visibility = View.GONE
+        
+        // 重置新的 imageViewNext 的位置
+        imageViewNext.translationX = 0f
+        imageViewNext.translationY = 0f
+        imageViewNext.scaleX = 1f
+        imageViewNext.scaleY = 1f
+        imageViewNext.rotation = 0f
+        imageViewNext.alpha = 1f
+    }
+    
+    /**
+     * 应用单图片动画
+     */
+    private fun applySingleImageAnimation(
+        photo: Photo,
+        animationType: AnimationHelper.AnimationType,
+        glideRequest: com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable>
+    ) {
+        // 先加载图片到 imageViewCurrent
+        glideRequest.into(imageViewCurrent)
         applySaturationEffect(imageViewCurrent)
+        
+        // 确保 imageViewCurrent 可见，imageViewNext 隐藏
+        imageViewCurrent.visibility = View.VISIBLE
+        imageViewNext.visibility = View.GONE
+        
+        // 重置位置
+        imageViewCurrent.translationX = 0f
+        imageViewCurrent.translationY = 0f
         
         // 根据动画类型应用不同效果
         when (animationType) {
@@ -390,30 +568,6 @@ class SlideshowActivity : AppCompatActivity() {
                 // 淡入淡出
                 imageViewCurrent.alpha = 0f
                 imageViewCurrent.animate().alpha(1f).setDuration(800).start()
-            }
-            AnimationHelper.AnimationType.SLIDE_LEFT -> {
-                // 从右向左滑入
-                imageViewCurrent.translationX = imageViewCurrent.width.toFloat()
-                imageViewCurrent.alpha = 1f
-                imageViewCurrent.animate().translationX(0f).setDuration(800).start()
-            }
-            AnimationHelper.AnimationType.SLIDE_RIGHT -> {
-                // 从左向右滑入
-                imageViewCurrent.translationX = -imageViewCurrent.width.toFloat()
-                imageViewCurrent.alpha = 1f
-                imageViewCurrent.animate().translationX(0f).setDuration(800).start()
-            }
-            AnimationHelper.AnimationType.SLIDE_UP -> {
-                // 从下向上滑入
-                imageViewCurrent.translationY = imageViewCurrent.height.toFloat()
-                imageViewCurrent.alpha = 1f
-                imageViewCurrent.animate().translationY(0f).setDuration(800).start()
-            }
-            AnimationHelper.AnimationType.SLIDE_DOWN -> {
-                // 从上向下滑入
-                imageViewCurrent.translationY = -imageViewCurrent.height.toFloat()
-                imageViewCurrent.alpha = 1f
-                imageViewCurrent.animate().translationY(0f).setDuration(800).start()
             }
             AnimationHelper.AnimationType.ZOOM_IN -> {
                 // 从小到大
@@ -441,9 +595,6 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.animate().alpha(1f).setDuration(800).start()
             }
         }
-
-        // 更新信息
-        updatePhotoInfo()
     }
 
     /**

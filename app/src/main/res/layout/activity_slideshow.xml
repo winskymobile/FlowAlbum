@@ -9,7 +9,7 @@
     android:background="@color/slideshow_background"
     android:keepScreenOn="true">
 
-    <!-- 当前显示的图片 -->
+    <!-- 当前显示的图片（背景层） -->
     <ImageView
         android:id="@+id/imageViewCurrent"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 下一张图片（用于动画切换） -->
+    <!-- 下一张图片（用于动画切换，前景层） -->
     <ImageView
         android:id="@+id/imageViewNext"
         android:layout_width="match_parent"
@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="gone"
+        android:elevation="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +59,7 @@
         android:textSize="18sp"
         android:visibility="gone"
         android:layout_marginTop="16dp"
+        android:elevation="10dp"
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -71,6 +73,7 @@
         android:textColor="@color/control_text"
         android:textSize="20sp"
         android:visibility="gone"
+        android:elevation="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +88,7 @@
         android:background="@color/control_background"
         android:padding="16dp"
         android:visibility="gone"
+        android:elevation="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

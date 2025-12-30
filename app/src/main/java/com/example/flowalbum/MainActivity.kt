@@ -2,6 +2,7 @@ package com.example.flowalbum
 
 import android.Manifest
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.KeyEvent
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -262,5 +264,24 @@ class MainActivity : FragmentActivity() {
     override fun onPause() {
         super.onPause()
         stopAutoPlay() // Stop auto-play when the app is not in the foreground
+    }
+
+    override fun onBackPressed() {
+        showExitConfirmationDialog()
+    }
+
+    private fun showExitConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.exit_confirmation_title)
+            .setMessage(R.string.exit_confirmation_message)
+            .setPositiveButton(R.string.exit) { dialog, _ ->
+                dialog.dismiss()
+                finish()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(true)
+            .show()
     }
 }

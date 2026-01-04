@@ -45,6 +45,7 @@ class SlideshowActivity : AppCompatActivity() {
     private lateinit var photoLoader: PhotoLoader         // 图片加载器
     private lateinit var settingsManager: SettingsManager // 设置管理器
     private lateinit var animationHelper: AnimationHelper // 动画助手
+    private lateinit var themeHelper: ThemeHelper         // 主题助手
 
     // 数据
     private val photoList = mutableListOf<Photo>()        // 图片列表
@@ -88,6 +89,9 @@ class SlideshowActivity : AppCompatActivity() {
 
         // 检查并请求权限
         checkAndRequestPermissions()
+        
+        // 应用保存的主题色
+        applyThemeColor(settingsManager.getThemeColor())
     }
 
     /**
@@ -97,6 +101,7 @@ class SlideshowActivity : AppCompatActivity() {
         photoLoader = PhotoLoader(this)
         settingsManager = SettingsManager(this)
         animationHelper = AnimationHelper()
+        themeHelper = ThemeHelper(this)
     }
 
     /**
@@ -755,12 +760,14 @@ class SlideshowActivity : AppCompatActivity() {
         val tabAnimation = dialogView.findViewById<Button>(R.id.tabAnimation)
         val tabDisplay = dialogView.findViewById<Button>(R.id.tabDisplay)
         val tabPhotos = dialogView.findViewById<Button>(R.id.tabPhotos)
+        val tabTheme = dialogView.findViewById<Button>(R.id.tabTheme)
         val tabAbout = dialogView.findViewById<Button>(R.id.tabAbout)
         
         // 获取内容页面
         val pageAnimation = dialogView.findViewById<View>(R.id.pageAnimation)
         val pageDisplay = dialogView.findViewById<View>(R.id.pageDisplay)
         val pagePhotos = dialogView.findViewById<View>(R.id.pagePhotos)
+        val pageTheme = dialogView.findViewById<View>(R.id.pageTheme)
         val pageAbout = dialogView.findViewById<View>(R.id.pageAbout)
         
         // 获取间隔设置控件
@@ -825,12 +832,54 @@ class SlideshowActivity : AppCompatActivity() {
             textVersion.text = "版本 1.0"
         }
         
+        // 获取主题颜色选择控件
+        val themeColorCyan = dialogView.findViewById<LinearLayout>(R.id.themeColorCyan)
+        val themeColorRed = dialogView.findViewById<LinearLayout>(R.id.themeColorRed)
+        val themeColorBlue = dialogView.findViewById<LinearLayout>(R.id.themeColorBlue)
+        val themeColorOrange = dialogView.findViewById<LinearLayout>(R.id.themeColorOrange)
+        val themeColorPurple = dialogView.findViewById<LinearLayout>(R.id.themeColorPurple)
+        val themeColorPink = dialogView.findViewById<LinearLayout>(R.id.themeColorPink)
+        val themeColorGold = dialogView.findViewById<LinearLayout>(R.id.themeColorGold)
+        val themeColorMint = dialogView.findViewById<LinearLayout>(R.id.themeColorMint)
+        val themeColorIndigo = dialogView.findViewById<LinearLayout>(R.id.themeColorIndigo)
+        
+        // 获取勾图标控件
+        val checkIconCyan = dialogView.findViewById<ImageView>(R.id.checkIconCyan)
+        val checkIconRed = dialogView.findViewById<ImageView>(R.id.checkIconRed)
+        val checkIconBlue = dialogView.findViewById<ImageView>(R.id.checkIconBlue)
+        val checkIconOrange = dialogView.findViewById<ImageView>(R.id.checkIconOrange)
+        val checkIconPurple = dialogView.findViewById<ImageView>(R.id.checkIconPurple)
+        val checkIconPink = dialogView.findViewById<ImageView>(R.id.checkIconPink)
+        val checkIconGold = dialogView.findViewById<ImageView>(R.id.checkIconGold)
+        val checkIconMint = dialogView.findViewById<ImageView>(R.id.checkIconMint)
+        val checkIconIndigo = dialogView.findViewById<ImageView>(R.id.checkIconIndigo)
+        
+        // 所有主题色块列表
+        val themeColorViews = listOf(
+            themeColorCyan, themeColorRed, themeColorBlue,
+            themeColorOrange, themeColorPurple, themeColorPink,
+            themeColorGold, themeColorMint, themeColorIndigo
+        )
+        
+        // 所有勾图标列表
+        val checkIconViews = listOf(
+            checkIconCyan, checkIconRed, checkIconBlue,
+            checkIconOrange, checkIconPurple, checkIconPink,
+            checkIconGold, checkIconMint, checkIconIndigo
+        )
+        
+        // 设置当前选中的主题色块和勾图标
+        val currentThemeIndex = settingsManager.getThemeColor()
+        themeColorViews.getOrNull(currentThemeIndex)?.isSelected = true
+        checkIconViews.getOrNull(currentThemeIndex)?.visibility = View.VISIBLE
+        
         // Tab切换函数
         fun switchTab(selectedTab: Button, selectedPage: View) {
             // 取消所有tab的选中状态
             tabAnimation.isSelected = false
             tabDisplay.isSelected = false
             tabPhotos.isSelected = false
+            tabTheme.isSelected = false
             tabAbout.isSelected = false
             
             // 设置当前tab为选中状态
@@ -840,6 +889,7 @@ class SlideshowActivity : AppCompatActivity() {
             pageAnimation.visibility = View.GONE
             pageDisplay.visibility = View.GONE
             pagePhotos.visibility = View.GONE
+            pageTheme.visibility = View.GONE
             pageAbout.visibility = View.GONE
             
             // 显示选中的页面
@@ -858,7 +908,37 @@ class SlideshowActivity : AppCompatActivity() {
         tabAnimation.setOnClickListener { switchTab(tabAnimation, pageAnimation) }
         tabDisplay.setOnClickListener { switchTab(tabDisplay, pageDisplay) }
         tabPhotos.setOnClickListener { switchTab(tabPhotos, pagePhotos) }
+        tabTheme.setOnClickListener { switchTab(tabTheme, pageTheme) }
         tabAbout.setOnClickListener { switchTab(tabAbout, pageAbout) }
+        
+        // 主题颜色选择函数
+        fun selectThemeColor(selectedView: LinearLayout, themeIndex: Int) {
+            // 取消所有色块的选中状态
+            themeColorViews.forEach { it.isSelected = false }
+            // 隐藏所有勾图标
+            checkIconViews.forEach { it.visibility = View.GONE }
+            // 选中当前色块
+            selectedView.isSelected = true
+            // 显示当前色块的勾图标
+            checkIconViews.getOrNull(themeIndex)?.visibility = View.VISIBLE
+            // 保存主题设置
+            settingsManager.setThemeColor(themeIndex)
+            // 立即应用主题
+            applyThemeColor(themeIndex)
+            // 刷新对话框中使用主题色的元素
+            updateDialogThemeColors(dialogView, themeIndex)
+        }
+        
+        // 为每个主题色块设置点击监听
+        themeColorCyan.setOnClickListener { selectThemeColor(themeColorCyan, 0) }
+        themeColorRed.setOnClickListener { selectThemeColor(themeColorRed, 1) }
+        themeColorBlue.setOnClickListener { selectThemeColor(themeColorBlue, 2) }
+        themeColorOrange.setOnClickListener { selectThemeColor(themeColorOrange, 3) }
+        themeColorPurple.setOnClickListener { selectThemeColor(themeColorPurple, 4) }
+        themeColorPink.setOnClickListener { selectThemeColor(themeColorPink, 5) }
+        themeColorGold.setOnClickListener { selectThemeColor(themeColorGold, 6) }
+        themeColorMint.setOnClickListener { selectThemeColor(themeColorMint, 7) }
+        themeColorIndigo.setOnClickListener { selectThemeColor(themeColorIndigo, 8) }
         
         // 默认选中第一个tab（动画效果）
         tabAnimation.isSelected = true
@@ -1116,6 +1196,9 @@ class SlideshowActivity : AppCompatActivity() {
             // 对话框关闭后不需要特殊处理，因为打开时没有暂停播放
         }
 
+        // 初始应用当前主题色到对话框（在显示前应用，确保所有元素都被更新）
+        applyThemeColorsToDialog(dialogView, currentThemeIndex)
+        
         dialog.show()
         
         // 设置对话框高度为屏幕高度的80%
@@ -1168,6 +1251,11 @@ class SlideshowActivity : AppCompatActivity() {
                 }
                 recyclerView.adapter = adapter
                 
+                // 应用主题色到适配器
+                val currentThemeIndex = settingsManager.getThemeColor()
+                val colors = themeHelper.getThemeColors(currentThemeIndex)
+                adapter.updateThemeColors(colors)
+                
                 Toast.makeText(
                     this@SlideshowActivity,
                     "找到 ${folders.size} 个本地文件夹",
@@ -1217,6 +1305,11 @@ class SlideshowActivity : AppCompatActivity() {
                     userPaused = false
                 }
                 recyclerView.adapter = adapter
+                
+                // 应用主题色到适配器
+                val currentThemeIndex = settingsManager.getThemeColor()
+                val colors = themeHelper.getThemeColors(currentThemeIndex)
+                adapter.updateThemeColors(colors)
                 
                 Toast.makeText(
                     this@SlideshowActivity,
@@ -1333,6 +1426,20 @@ class SlideshowActivity : AppCompatActivity() {
                     }
                 }
                 recyclerViewFolders.adapter = adapter
+                
+                // 应用主题色到适配器
+                val currentThemeIndex = settingsManager.getThemeColor()
+                val colors = themeHelper.getThemeColors(currentThemeIndex)
+                adapter.updateThemeColors(colors)
+                
+                // 应用主题色到对话框按钮
+                themeHelper.applyThemeToButton(btnAllPhotos, colors)
+                themeHelper.applyThemeToButton(btnCancel, colors)
+                
+                // 更新分隔线颜色（遍历查找）
+                if (dialogView is android.view.ViewGroup) {
+                    updateDividerColors(dialogView, colors.primary)
+                }
                 
             } catch (e: Exception) {
                 progressDialog.dismiss()
@@ -1641,4 +1748,235 @@ class SlideshowActivity : AppCompatActivity() {
             startSlideshow()
         }
     }
+    
+    /**
+     * 应用主题颜色到界面元素
+     */
+    private fun applyThemeColor(themeIndex: Int) {
+        // 获取主题颜色
+        val colors = themeHelper.getThemeColors(themeIndex)
+        
+        // 更新按钮
+        themeHelper.applyThemeToButton(btnPrevious, colors)
+        themeHelper.applyThemeToButton(btnPlayPause, colors)
+        themeHelper.applyThemeToButton(btnNext, colors)
+        themeHelper.applyThemeToButton(btnSettings, colors)
+        
+        // 更新文本高亮颜色
+        textPhotoInfo.setTextColor(colors.primary)
+    }
+    
+    
+    /**
+     * 应用主题色到对话框的所有元素（初始化时调用）
+     */
+    private fun applyThemeColorsToDialog(dialogView: View, themeIndex: Int) {
+        val colors = themeHelper.getThemeColors(themeIndex)
+        
+        // 更新顶部分隔线
+        dialogView.findViewById<View>(R.id.dialogRootLayout)?.let { rootLayout ->
+            if (rootLayout is android.view.ViewGroup) {
+                // 查找并更新所有元素
+                applyThemeToAllViews(rootLayout, colors)
+            }
+        }
+    }
+    
+    /**
+     * 更新对话框中的主题色元素（切换主题时调用）
+     */
+    private fun updateDialogThemeColors(dialogView: View, themeIndex: Int) {
+        val colors = themeHelper.getThemeColors(themeIndex)
+        
+        // 更新所有视图
+        dialogView.findViewById<View>(R.id.dialogRootLayout)?.let { rootLayout ->
+            if (rootLayout is android.view.ViewGroup) {
+                applyThemeToAllViews(rootLayout, colors)
+            }
+        }
+    }
+    
+    /**
+     * 递归应用主题色到所有视图
+     */
+    private fun applyThemeToAllViews(viewGroup: android.view.ViewGroup, colors: ThemeHelper.ThemeColors) {
+        for (i in 0 until viewGroup.childCount) {
+            val child = viewGroup.getChildAt(i)
+            
+            // 根据控件ID应用主题色
+            when (child.id) {
+                // Tab 按钮
+                R.id.tabAnimation, R.id.tabDisplay, R.id.tabPhotos, R.id.tabTheme, R.id.tabAbout -> {
+                    if (child is Button) {
+                        themeHelper.applyThemeToTabButton(child, colors)
+                    }
+                }
+                // 普通按钮（包括关闭按钮）
+                R.id.btnDecreaseInterval, R.id.btnIncreaseInterval,
+                R.id.btnLocalPhotos, R.id.btnExternalDevices,
+                R.id.btnCheckUpdate, R.id.btnClose -> {
+                    if (child is Button) {
+                        themeHelper.applyThemeToButton(child, colors)
+                    }
+                }
+                // 动画类型 RadioButton
+                R.id.radioFade, R.id.radioSlideLeft, R.id.radioSlideRight,
+                R.id.radioSlideUp, R.id.radioSlideDown, R.id.radioZoomIn,
+                R.id.radioZoomOut, R.id.radioRotate, R.id.radioRandom -> {
+                    if (child is RadioButton) {
+                        themeHelper.applyThemeToRadioButton(child, colors)
+                    }
+                }
+                // 开关容器（点击区域）
+                R.id.layoutAutoPlay, R.id.layoutHighQuality,
+                R.id.layoutHardwareAccel, R.id.layoutFitScreen -> {
+                    if (child is LinearLayout) {
+                        // 创建聚焦时的边框效果
+                        val drawable = android.graphics.drawable.StateListDrawable()
+                        val density = resources.displayMetrics.density
+                        
+                        // 聚焦状态 - 使用主题色的半透明背景
+                        val focusedDrawable = android.graphics.drawable.GradientDrawable()
+                        focusedDrawable.setColor(colors.primaryTransparent)
+                        focusedDrawable.setStroke((3 * density).toInt(), colors.primary)
+                        focusedDrawable.cornerRadius = 4f * density
+                        drawable.addState(intArrayOf(android.R.attr.state_focused), focusedDrawable)
+                        
+                        // 正常状态
+                        val normalDrawable = android.graphics.drawable.GradientDrawable()
+                        normalDrawable.setColor(android.graphics.Color.TRANSPARENT)
+                        drawable.addState(intArrayOf(), normalDrawable)
+                        
+                        child.background = drawable
+                    }
+                }
+                // Switch 开关
+                R.id.switchAutoPlay, R.id.switchHighQuality,
+                R.id.switchHardwareAccel, R.id.switchFitScreen -> {
+                    if (child is androidx.appcompat.widget.SwitchCompat) {
+                        // 更新 Switch 的主题色
+                        child.thumbTintList = android.content.res.ColorStateList(
+                            arrayOf(
+                                intArrayOf(android.R.attr.state_checked),
+                                intArrayOf()
+                            ),
+                            intArrayOf(colors.primary, ContextCompat.getColor(this, R.color.button_normal))
+                        )
+                        child.trackTintList = android.content.res.ColorStateList(
+                            arrayOf(
+                                intArrayOf(android.R.attr.state_checked),
+                                intArrayOf()
+                            ),
+                            intArrayOf(colors.primaryTransparent, ContextCompat.getColor(this, R.color.dialog_divider))
+                        )
+                    }
+                }
+                // 主题色选择块
+                R.id.themeColorCyan, R.id.themeColorRed, R.id.themeColorBlue,
+                R.id.themeColorOrange, R.id.themeColorPurple, R.id.themeColorPink,
+                R.id.themeColorGold, R.id.themeColorMint, R.id.themeColorIndigo -> {
+                    if (child is LinearLayout) {
+                        // 创建主题色块的选择器
+                        val drawable = android.graphics.drawable.StateListDrawable()
+                        val density = resources.displayMetrics.density
+                        
+                        // 选中状态
+                        val selectedDrawable = android.graphics.drawable.GradientDrawable()
+                        selectedDrawable.setColor(colors.primary)
+                        selectedDrawable.setStroke((3 * density).toInt(), colors.primaryLight)
+                        selectedDrawable.cornerRadius = 4f * density
+                        drawable.addState(intArrayOf(android.R.attr.state_selected), selectedDrawable)
+                        
+                        // 焦点状态
+                        val focusedDrawable = android.graphics.drawable.GradientDrawable()
+                        focusedDrawable.setColor(colors.primaryTransparent)
+                        focusedDrawable.setStroke((3 * density).toInt(), colors.primary)
+                        focusedDrawable.cornerRadius = 4f * density
+                        drawable.addState(intArrayOf(android.R.attr.state_focused), focusedDrawable)
+                        
+                        // 正常状态
+                        val normalDrawable = android.graphics.drawable.GradientDrawable()
+                        normalDrawable.setColor(ContextCompat.getColor(this, R.color.button_normal))
+                        normalDrawable.cornerRadius = 4f * density
+                        drawable.addState(intArrayOf(), normalDrawable)
+                        
+                        child.background = drawable
+                    }
+                }
+                // RecyclerView (文件夹列表)
+                R.id.recyclerViewFolders -> {
+                    if (child is androidx.recyclerview.widget.RecyclerView) {
+                        // 更新 RecyclerView 中已有的适配器
+                        val adapter = child.adapter
+                        if (adapter is FolderAdapter) {
+                            adapter.updateThemeColors(colors)
+                        }
+                    }
+                }
+                // 数值显示文本
+                R.id.textInterval, R.id.textSaturationValue -> {
+                    if (child is TextView) {
+                        child.setTextColor(colors.primary)
+                    }
+                }
+                // SeekBar
+                R.id.seekBarSaturation -> {
+                    if (child is android.widget.SeekBar) {
+                        child.progressTintList = android.content.res.ColorStateList.valueOf(colors.primary)
+                        child.thumbTintList = android.content.res.ColorStateList.valueOf(colors.primary)
+                    }
+                }
+            }
+            
+            // 处理通用元素
+            when (child) {
+                is TextView -> {
+                    // 检查是否是应用名称标题（在关于页面）
+                    if (child.text?.toString() == getString(R.string.app_name)) {
+                        child.setTextColor(colors.primary)
+                    }
+                }
+                is androidx.recyclerview.widget.RecyclerView -> {
+                    // RecyclerView（文件夹列表）- 不需要特殊处理，由 FolderAdapter 处理
+                }
+                is View -> {
+                    // 更新分隔线（2dp 或 1dp 高度）
+                    val height = child.layoutParams?.height ?: 0
+                    val density = resources.displayMetrics.density
+                    if (height == (2 * density).toInt() || height == (1 * density).toInt()) {
+                        child.setBackgroundColor(colors.primary)
+                    }
+                }
+            }
+            
+            // 递归处理子视图
+            if (child is android.view.ViewGroup) {
+                applyThemeToAllViews(child, colors)
+            }
+        }
+    }
+    
+    /**
+     * 递归更新分隔线颜色
+     */
+    private fun updateDividerColors(viewGroup: android.view.ViewGroup, color: Int) {
+        val density = resources.displayMetrics.density
+        for (i in 0 until viewGroup.childCount) {
+            val child = viewGroup.getChildAt(i)
+            
+            // 检查是否是分隔线（高度为 1dp 或 2dp 的 View）
+            if (child is View && child !is android.view.ViewGroup) {
+                val height = child.layoutParams?.height ?: 0
+                if (height == (1 * density).toInt() || height == (2 * density).toInt()) {
+                    child.setBackgroundColor(color)
+                }
+            }
+            
+            // 递归处理子视图
+            if (child is android.view.ViewGroup) {
+                updateDividerColors(child, color)
+            }
+        }
+    }
+    
 }

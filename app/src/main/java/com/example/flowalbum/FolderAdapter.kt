@@ -1,10 +1,13 @@
 package com.example.flowalbum
 
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.StateListDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
@@ -16,6 +19,17 @@ class FolderAdapter(
     private val folders: List<PhotoFolder>,
     private val onFolderClick: (PhotoFolder) -> Unit
 ) : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
+    
+    // 主题色，可以通过方法更新
+    private var themeColors: ThemeHelper.ThemeColors? = null
+    
+    /**
+     * 更新主题颜色
+     */
+    fun updateThemeColors(colors: ThemeHelper.ThemeColors) {
+        themeColors = colors
+        notifyDataSetChanged()
+    }
 
     inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageFolderCover: ImageView = itemView.findViewById(R.id.imageFolderCover)
@@ -54,6 +68,31 @@ class FolderAdapter(
         
         // 设置图片数量
         holder.textPhotoCount.text = folder.getFormattedCount()
+        
+        // 应用主题色到 item 背景
+        themeColors?.let { colors ->
+            val context = holder.itemView.context
+            val density = context.resources.displayMetrics.density
+            val drawable = StateListDrawable()
+            
+            // 焦点状态
+            val focusedDrawable = GradientDrawable()
+            focusedDrawable.setColor(colors.primaryTransparent)
+            focusedDrawable.setStroke((3 * density).toInt(), colors.primary)
+            focusedDrawable.cornerRadius = 4f * density
+            drawable.addState(intArrayOf(android.R.attr.state_focused), focusedDrawable)
+            
+            // 正常状态
+            val normalDrawable = GradientDrawable()
+            normalDrawable.setColor(ContextCompat.getColor(context, R.color.button_normal))
+            normalDrawable.cornerRadius = 4f * density
+            drawable.addState(intArrayOf(), normalDrawable)
+            
+            holder.itemView.background = drawable
+            
+            // 更新文字颜色
+            holder.textPhotoCount.setTextColor(colors.primary)
+        }
         
         // 加载封面图片
         if (folder.coverPhoto != null) {

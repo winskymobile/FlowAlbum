@@ -1,9 +1,70 @@
 <resources>
-    <!-- Netflix风格主色调 -->
+    <!-- 当前主题色 - 动态设置 -->
+    <color name="theme_primary">#24C084</color>
+    <color name="theme_primary_dark">#1A8A5E</color>
+    <color name="theme_primary_light">#3DD99C</color>
+    <color name="theme_primary_transparent">#8024C084</color>
+    
+    <!-- Netflix风格主色调（青绿色 - 默认主题）-->
     <color name="netflix_green">#24C084</color>
     <color name="netflix_green_dark">#1A8A5E</color>
     <color name="netflix_green_light">#3DD99C</color>
     <color name="netflix_green_transparent">#8024C084</color>
+    
+    <!-- 主题色方案 -->
+    <!-- 1. 默认（青绿色） -->
+    <color name="theme_cyan">#24C084</color>
+    <color name="theme_cyan_dark">#1A8A5E</color>
+    <color name="theme_cyan_light">#3DD99C</color>
+    <color name="theme_cyan_transparent">#8024C084</color>
+    
+    <!-- 2. 炽焰红 -->
+    <color name="theme_red">#FF4757</color>
+    <color name="theme_red_dark">#E63946</color>
+    <color name="theme_red_light">#FF6B81</color>
+    <color name="theme_red_transparent">#80FF4757</color>
+    
+    <!-- 3. 晴空蓝 -->
+    <color name="theme_blue">#3EADFF</color>
+    <color name="theme_blue_dark">#2E9CE8</color>
+    <color name="theme_blue_light">#70C1FF</color>
+    <color name="theme_blue_transparent">#803EADFF</color>
+    
+    <!-- 4. 阳光橙 -->
+    <color name="theme_orange">#FFA502</color>
+    <color name="theme_orange_dark">#FF9500</color>
+    <color name="theme_orange_light">#FFB733</color>
+    <color name="theme_orange_transparent">#80FFA502</color>
+    
+    <!-- 5. 魅力紫 -->
+    <color name="theme_purple">#A55EEA</color>
+    <color name="theme_purple_dark">#9448D9</color>
+    <color name="theme_purple_light">#C180F0</color>
+    <color name="theme_purple_transparent">#80A55EEA</color>
+    
+    <!-- 6. 玫瑰粉 -->
+    <color name="theme_pink">#FF6B9D</color>
+    <color name="theme_pink_dark">#FF5588</color>
+    <color name="theme_pink_light">#FF8BB5</color>
+    <color name="theme_pink_transparent">#80FF6B9D</color>
+    
+    <!-- 7. 柠檬黄 -->
+    <color name="theme_gold">#FFD93D</color>
+    <color name="theme_gold_dark">#FFC312</color>
+    <color name="theme_gold_light">#FFE66D</color>
+    <color name="theme_gold_transparent">#80FFD93D</color>
+    
+    <!-- 8. 简约白 -->
+    <color name="theme_mint">#F5F5F5</color>
+    <color name="theme_mint_dark">#E0E0E0</color>
+    <color name="theme_mint_light">#FFFFFF</color>
+    <color name="theme_mint_transparent">#80F5F5F5</color>
+    
+    <!-- 9. 珊瑚橘 -->
+    <color name="theme_indigo">#FF7979</color>
+    <color name="theme_indigo_dark">#FF6348</color>
+    <color name="theme_indigo_light">#FF9F9F</color>
+    <color name="theme_indigo_transparent">#80FF7979</color>
     
     <color name="background_gradient_start">#000000</color>
     <color name="background_gradient_end">#141414</color>

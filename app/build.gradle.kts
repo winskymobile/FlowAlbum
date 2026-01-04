@@ -17,8 +17,8 @@ android {
         applicationId = "com.example.flowalbum"
         minSdk = 21
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
         
         // 将构建时间戳添加到BuildConfig
         buildConfigField("String", "BUILD_TIMESTAMP", "\"$buildTimestamp\"")

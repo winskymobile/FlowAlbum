@@ -38,6 +38,8 @@
     <string name="animation_settings">播放设置</string>
     <string name="animation_type">动画类型</string>
     <string name="random_animation">随机动画</string>
+    <string name="theme_settings">主题设置</string>
+    <string name="theme_color">主题颜色</string>
     <string name="display_settings">显示设置</string>
     <string name="auto_play">自动播放</string>
     <string name="high_quality_mode">真彩色模式</string>
@@ -58,6 +60,17 @@
     <string name="animation_zoom_out">缩小</string>
     <string name="animation_rotate">旋转</string>
     <string name="animation_random">随机效果</string>
+    
+    <!-- 主题颜色 -->
+    <string name="theme_cyan">默认</string>
+    <string name="theme_red">炽焰红</string>
+    <string name="theme_blue">晴空蓝</string>
+    <string name="theme_orange">阳光橙</string>
+    <string name="theme_purple">魅力紫</string>
+    <string name="theme_pink">玫瑰粉</string>
+    <string name="theme_gold">柠檬黄</string>
+    <string name="theme_mint">简约白</string>
+    <string name="theme_indigo">珊瑚橘</string>
     
     <!-- 按钮 -->
     <string name="ok">确定</string>

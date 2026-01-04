@@ -23,6 +23,7 @@ class SettingsManager(context: Context) {
         private const val KEY_HARDWARE_ACCEL = "hardware_acceleration"
         private const val KEY_FIT_SCREEN = "fit_screen"
         private const val KEY_COLOR_SATURATION = "color_saturation"
+        private const val KEY_THEME_COLOR = "theme_color"
         
         // 默认值
         const val DEFAULT_INTERVAL = 3000L // 默认3秒切换
@@ -186,6 +187,21 @@ class SettingsManager(context: Context) {
     }
 
     /**
+     * 获取主题颜色（0-8，默认0为青绿色）
+     */
+    fun getThemeColor(): Int {
+        return prefs.getInt(KEY_THEME_COLOR, 0)
+    }
+
+    /**
+     * 设置主题颜色
+     */
+    fun setThemeColor(themeIndex: Int) {
+        val validIndex = themeIndex.coerceIn(0, 8)
+        prefs.edit().putInt(KEY_THEME_COLOR, validIndex).apply()
+    }
+
+    /**
      * 重置所有设置为默认值
      */
     fun resetToDefaults() {
@@ -205,6 +221,7 @@ class SettingsManager(context: Context) {
             硬件加速: ${isHardwareAcceleration()}
             适应屏幕: ${isFitScreen()}
             色彩饱和度: ${getColorSaturation()}
+            主题颜色: ${getThemeColor()}
             文件夹路径: ${getFolderPath() ?: "未设置"}
         """.trimIndent()
     }

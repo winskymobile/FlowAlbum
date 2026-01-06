@@ -37,13 +37,13 @@
 
 ### 🎉 最新版本：v1.0.4
 
-📅 *发布日期：2026年01月04日*
+📅 *发布日期：2026年01月06日*
 
 <br/>
 
 | 📦 下载链接 | 📊 文件信息 |
 |:---:|:---:|
-| [![下载 APK](https://img.shields.io/badge/⬇️%20立即下载-FlowAlbum%20v1.0.4-0066CC?style=for-the-badge&logo=android&logoColor=white)](app/release/FlowAlbum_v1.0.4.apk) | 适用于 Android TV / 电视盒子 |
+| [![下载 APK](https://img.shields.io/badge/⬇️%20立即下载-FlowAlbum%20v1.0.4-0066CC?style=for-the-badge&logo=android&logoColor=white)](app/release/FlowAlbum_v1.0.4_20260106141558.apk) | 适用于 Android TV / 电视盒子 |
 
 </div>
 
@@ -69,7 +69,7 @@
 2. 使用数据线或 WiFi ADB 连接电视和电脑
 3. 在电脑上执行命令：
    ```bash
-   adb install FlowAlbum_v1.0.4.apk
+   adb install FlowAlbum_v1.0.4_20260106141558.apk
    ```
 
 </details>
@@ -280,7 +280,7 @@
 ## 🔄 版本历史
 
 <details open>
-<summary><b>🆕 v1.0.4</b> (2026-01-04) - 最新版本</summary>
+<summary><b>🆕 v1.0.4</b> (2026-01-06) - 最新版本</summary>
 
 | 类型 | 更新内容 |
 |:---:|:---|

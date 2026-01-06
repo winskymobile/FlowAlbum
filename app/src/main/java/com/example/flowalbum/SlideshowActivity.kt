@@ -410,36 +410,85 @@ class SlideshowActivity : AppCompatActivity() {
         animationType: AnimationHelper.AnimationType,
         glideRequest: com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable>
     ) {
-        // 将新图片加载到 imageViewNext
-        glideRequest.into(imageViewNext)
-        applySaturationEffect(imageViewNext)
+        // 设置初始位置（在加载图片之前）
+        val width = imageViewCurrent.width.toFloat()
+        val height = imageViewCurrent.height.toFloat()
         
-        // 确保两个 ImageView 都可见
-        imageViewCurrent.visibility = View.VISIBLE
+        // 先设置 imageViewNext 的初始位置和可见性
         imageViewNext.visibility = View.VISIBLE
-        
-        // 重置 imageViewNext 的属性
         imageViewNext.alpha = 1f
         imageViewNext.scaleX = 1f
         imageViewNext.scaleY = 1f
         imageViewNext.rotation = 0f
         
-        // 设置初始位置
-        val width = imageViewCurrent.width.toFloat()
-        val height = imageViewCurrent.height.toFloat()
+        // 根据动画类型设置初始位置
+        when (animationType) {
+            AnimationHelper.AnimationType.SLIDE_LEFT -> {
+                imageViewNext.translationX = width
+                imageViewNext.translationY = 0f
+            }
+            AnimationHelper.AnimationType.SLIDE_RIGHT -> {
+                imageViewNext.translationX = -width
+                imageViewNext.translationY = 0f
+            }
+            AnimationHelper.AnimationType.SLIDE_UP -> {
+                imageViewNext.translationX = 0f
+                imageViewNext.translationY = height
+            }
+            AnimationHelper.AnimationType.SLIDE_DOWN -> {
+                imageViewNext.translationX = 0f
+                imageViewNext.translationY = -height
+            }
+            else -> {
+                imageViewNext.translationX = 0f
+                imageViewNext.translationY = 0f
+            }
+        }
+        
+        // 将新图片加载到 imageViewNext，使用自定义Target来监听加载完成
+        glideRequest.into(object : com.bumptech.glide.request.target.CustomTarget<android.graphics.drawable.Drawable>() {
+            override fun onResourceReady(
+                resource: android.graphics.drawable.Drawable,
+                transition: com.bumptech.glide.request.transition.Transition<in android.graphics.drawable.Drawable>?
+            ) {
+                // 将图片设置到imageViewNext
+                imageViewNext.setImageDrawable(resource)
+                // 应用饱和度效果
+                applySaturationEffect(imageViewNext)
+                // 开始动画
+                startSlideAnimation(animationType, width, height)
+            }
+            
+            override fun onLoadCleared(placeholder: android.graphics.drawable.Drawable?) {
+                // 清理时不做处理
+            }
+            
+            override fun onLoadFailed(errorDrawable: android.graphics.drawable.Drawable?) {
+                // 加载失败，直接完成动画
+                finishSlideAnimation()
+            }
+        })
+    }
+    
+    /**
+     * 开始滑动动画
+     */
+    private fun startSlideAnimation(animationType: AnimationHelper.AnimationType, width: Float, height: Float) {
+        // 确保两个 ImageView 都可见
+        imageViewCurrent.visibility = View.VISIBLE
+        imageViewNext.visibility = View.VISIBLE
+        
+        // 重置 imageViewCurrent 的位置
+        imageViewCurrent.translationX = 0f
+        imageViewCurrent.translationY = 0f
         
         when (animationType) {
             AnimationHelper.AnimationType.SLIDE_LEFT -> {
                 // 左滑：新图从右边进入，旧图从左边退出
-                imageViewNext.translationX = width
-                imageViewNext.translationY = 0f
-                imageViewCurrent.translationX = 0f
-                imageViewCurrent.translationY = 0f
-                
-                // 同时移动两张图片
                 imageViewNext.animate()
                     .translationX(0f)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .withEndAction {
                         finishSlideAnimation()
                     }
@@ -448,18 +497,15 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.animate()
                     .translationX(-width)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .start()
             }
             AnimationHelper.AnimationType.SLIDE_RIGHT -> {
                 // 右滑：新图从左边进入，旧图从右边退出
-                imageViewNext.translationX = -width
-                imageViewNext.translationY = 0f
-                imageViewCurrent.translationX = 0f
-                imageViewCurrent.translationY = 0f
-                
                 imageViewNext.animate()
                     .translationX(0f)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .withEndAction {
                         finishSlideAnimation()
                     }
@@ -468,18 +514,15 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.animate()
                     .translationX(width)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .start()
             }
             AnimationHelper.AnimationType.SLIDE_UP -> {
                 // 上滑：新图从下边进入，旧图从上边退出
-                imageViewNext.translationX = 0f
-                imageViewNext.translationY = height
-                imageViewCurrent.translationX = 0f
-                imageViewCurrent.translationY = 0f
-                
                 imageViewNext.animate()
                     .translationY(0f)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .withEndAction {
                         finishSlideAnimation()
                     }
@@ -488,18 +531,15 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.animate()
                     .translationY(-height)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .start()
             }
             AnimationHelper.AnimationType.SLIDE_DOWN -> {
                 // 下滑：新图从上边进入，旧图从下边退出
-                imageViewNext.translationX = 0f
-                imageViewNext.translationY = -height
-                imageViewCurrent.translationX = 0f
-                imageViewCurrent.translationY = 0f
-                
                 imageViewNext.animate()
                     .translationY(0f)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .withEndAction {
                         finishSlideAnimation()
                     }
@@ -508,6 +548,7 @@ class SlideshowActivity : AppCompatActivity() {
                 imageViewCurrent.animate()
                     .translationY(height)
                     .setDuration(800)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
                     .start()
             }
             else -> {

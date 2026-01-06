@@ -29,22 +29,17 @@ class UpdateChecker(private val context: Context) {
         private const val GITHUB_RAW_PATH =
             "https://github.com/winskymobile/FlowAlbum/raw/main/app/release/"
         
-        // API检测用代理站前缀列表（用于检测更新）
+        // Gitee备用下载地址
+        private const val GITEE_RAW_PATH =
+            "https://gitee.com/winskymobile/FlowAlbum/raw/main/app/release/"
+        
+        // 代理站前缀列表（空字符串表示直接访问，其他为代理站前缀）
         // 按优先级排序：首先尝试直接访问，失败后依次尝试代理站
-        private val API_PROXY_PREFIXES = listOf(
+        private val PROXY_PREFIXES = listOf(
             "",                              // 直接访问（无代理）
             "https://gh-proxy.com/",         // 代理站1
             "https://cors.isteed.cc/",       // 代理站2
             "https://ghfast.top/"            // 代理站3
-        )
-        
-        // 下载加速镜像列表（用于实际文件下载，兼容DownloadManager）
-        // 这些是专门的GitHub文件下载镜像，比代理站更稳定可靠
-        private val DOWNLOAD_MIRRORS = listOf(
-            "https://ghproxy.com/",          // GitHub文件代理（推荐）
-            "https://mirror.ghproxy.com/",   // 备用镜像1
-            "https://ghps.cc/",              // 备用镜像2
-            ""                                // 最后尝试直连
         )
         
         // APK文件名正则表达式：FlowAlbum_v{版本号}_{时间戳}.apk
@@ -184,8 +179,8 @@ class UpdateChecker(private val context: Context) {
     private fun fetchApkListFromGitHub(): List<ApkInfo> {
         val errors = mutableListOf<String>()
         
-        // 依次尝试直接访问和各个代理站（用于API检测）
-        for (proxyPrefix in API_PROXY_PREFIXES) {
+        // 依次尝试直接访问和各个代理站
+        for (proxyPrefix in PROXY_PREFIXES) {
             try {
                 val apiUrl = proxyPrefix + GITHUB_API_PATH
                 val result = tryFetchFromUrl(apiUrl, proxyPrefix)
@@ -253,13 +248,22 @@ class UpdateChecker(private val context: Context) {
                         val version = matchResult.groupValues[1]
                         val timestamp = matchResult.groupValues[2]
                         
-                        // 注意：这里只保存文件名，下载URL在下载时动态生成
-                        // 这样可以让下载使用专门的镜像站，而不是API检测用的代理站
+                        // 优先使用 GitHub API 返回的 download_url（这是官方下载地址）
+                        // 如果使用了代理站，则在 download_url 前添加代理前缀
+                        val apiDownloadUrl = item.optString("download_url", "")
+                        val downloadUrl = if (apiDownloadUrl.isNotEmpty()) {
+                            // 使用 API 返回的下载地址，并添加代理前缀
+                            proxyPrefix + apiDownloadUrl
+                        } else {
+                            // 备用方案：手动构建下载URL
+                            proxyPrefix + GITHUB_RAW_PATH + name
+                        }
+                        
                         apkList.add(ApkInfo(
                             fileName = name,
                             version = version,
                             timestamp = timestamp,
-                            downloadUrl = name  // 暂存文件名，实际下载时替换为完整URL
+                            downloadUrl = downloadUrl
                         ))
                     }
                 }
@@ -371,30 +375,82 @@ class UpdateChecker(private val context: Context) {
     }
     
     /**
+     * 从代理站 URL 中提取真实的 GitHub 下载地址
+     * @param proxyUrl 代理站 URL
+     * @return 真实的 GitHub 下载地址，如果不是代理站 URL 则返回原 URL
+     */
+    private fun extractRealUrl(proxyUrl: String): String {
+        return try {
+            // 检查是否是代理站 URL
+            val proxyPrefixes = listOf(
+                "https://gh-proxy.com/",
+                "https://cors.isteed.cc/",
+                "https://ghfast.top/"
+            )
+            
+            for (prefix in proxyPrefixes) {
+                if (proxyUrl.startsWith(prefix)) {
+                    // 移除代理站前缀，返回真实的 GitHub URL
+                    return proxyUrl.substring(prefix.length)
+                }
+            }
+            
+            // 不是代理站 URL，直接返回原 URL
+            proxyUrl
+        } catch (e: Exception) {
+            proxyUrl
+        }
+    }
+    
+    /**
      * 使用系统 DownloadManager 下载 APK
-     * 优先使用成功的API代理站，如果失败则尝试其他镜像
+     * 优先使用 GitHub 直连，失败后自动切换到 Gitee 备用地址
+     * @param downloadUrl 下载链接（可以是代理站链接或直接链接）
      * @param fileName APK 文件名
      * @return 下载任务 ID，如果失败返回 -1
      */
-    fun downloadApk(fileName: String): Long {
+    fun downloadApk(downloadUrl: String, fileName: String): Long {
         return try {
+            // 提取真实的 GitHub 下载地址（如果是代理站 URL）
+            val realUrl = extractRealUrl(downloadUrl)
+            
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             
-            // 构建完整的下载URL
-            // 优先使用API检测时成功的代理站，如果为空则使用专用下载镜像
-            val githubUrl = GITHUB_RAW_PATH + fileName
-            val downloadUrl = if (successfulProxyPrefix.isNotEmpty()) {
-                // 使用API检测成功的代理站
-                successfulProxyPrefix + githubUrl
-            } else {
-                // 使用专用下载镜像
-                DOWNLOAD_MIRRORS[0] + githubUrl
+            // 优先尝试 GitHub 直连下载
+            val githubDownloadId = tryDownloadFromUrl(downloadManager, realUrl, fileName, "GitHub")
+            
+            // 如果 GitHub 下载创建失败，尝试使用 Gitee 备用地址
+            if (githubDownloadId == -1L) {
+                // 构建 Gitee 备用下载地址
+                val giteeUrl = GITEE_RAW_PATH + fileName
+                return tryDownloadFromUrl(downloadManager, giteeUrl, fileName, "Gitee备用")
             }
             
-            val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
+            githubDownloadId
+        } catch (e: Exception) {
+            -1L
+        }
+    }
+    
+    /**
+     * 尝试从指定 URL 下载 APK
+     * @param downloadManager DownloadManager 实例
+     * @param url 下载 URL
+     * @param fileName 文件名
+     * @param source 下载源描述（用于通知显示）
+     * @return 下载任务 ID，失败返回 -1
+     */
+    private fun tryDownloadFromUrl(
+        downloadManager: DownloadManager,
+        url: String,
+        fileName: String,
+        source: String
+    ): Long {
+        return try {
+            val request = DownloadManager.Request(Uri.parse(url)).apply {
                 // 设置标题和描述
                 setTitle("FlowAlbum 更新")
-                setDescription("正在下载 $fileName")
+                setDescription("正在从${source}下载 $fileName")
                 
                 // 设置通知
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)

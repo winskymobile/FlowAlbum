@@ -1203,7 +1203,7 @@ class SlideshowActivity : AppCompatActivity() {
                             .setMessage(message)
                             .setPositiveButton(getString(R.string.update_download)) { dialog, _ ->
                                 dialog.dismiss()
-                                // 使用内置下载功能（使用镜像站加速）
+                                // 使用内置下载功能（自动处理代理站链接）
                                 startDownload(updateChecker, updateInfo.downloadUrl, updateInfo.fileName)
                             }
                             .setNegativeButton(getString(R.string.update_later)) { dialog, _ ->
@@ -1584,8 +1584,8 @@ class SlideshowActivity : AppCompatActivity() {
      * 开始下载更新并显示进度
      */
     private fun startDownload(updateChecker: UpdateChecker, downloadUrl: String, fileName: String) {
-        // 开始下载（只需要文件名，downloadUrl参数保留用于显示但不使用）
-        val downloadId = updateChecker.downloadApk(fileName)
+        // 开始下载
+        val downloadId = updateChecker.downloadApk(downloadUrl, fileName)
         
         if (downloadId == -1L) {
             Toast.makeText(this, "启动下载失败", Toast.LENGTH_SHORT).show()
@@ -1622,9 +1622,6 @@ class SlideshowActivity : AppCompatActivity() {
         
         // 定时查询下载进度
         val progressHandler = Handler(Looper.getMainLooper())
-        var pendingCount = 0  // 记录"准备下载"状态持续的次数
-        val MAX_PENDING_COUNT = 20  // 最多等待10秒（20次 x 500ms）
-        
         val progressRunnable = object : Runnable {
             override fun run() {
                 val result = updateChecker.queryDownloadProgress(downloadId)
@@ -1633,33 +1630,6 @@ class SlideshowActivity : AppCompatActivity() {
                     val (progress, statusText) = result
                     progressText.text = statusText
                     progressBar.progress = progress
-                    
-                    // 检测是否一直卡在"准备下载..."状态
-                    if (statusText.contains("准备下载")) {
-                        pendingCount++
-                        if (pendingCount >= MAX_PENDING_COUNT) {
-                            // 超时：取消当前下载并提示用户
-                            progressDialog.dismiss()
-                            updateChecker.cancelDownload(downloadId)
-                            
-                            AlertDialog.Builder(this@SlideshowActivity)
-                                .setTitle("下载超时")
-                                .setMessage("下载连接超时，可能是网络问题。\n\n建议：\n1. 检查网络连接\n2. 稍后重试\n3. 或尝试使用其他网络环境")
-                                .setPositiveButton("重试") { dialog, _ ->
-                                    dialog.dismiss()
-                                    // 重新开始下载
-                                    startDownload(updateChecker, downloadUrl, fileName)
-                                }
-                                .setNegativeButton("取消") { dialog, _ ->
-                                    dialog.dismiss()
-                                }
-                                .show()
-                            return
-                        }
-                    } else {
-                        // 状态已改变，重置计数器
-                        pendingCount = 0
-                    }
                     
                     // 如果下载完成或失败，停止查询
                     if (statusText.contains("完成")) {
@@ -1679,19 +1649,11 @@ class SlideshowActivity : AppCompatActivity() {
                         return
                     } else if (statusText.contains("失败")) {
                         progressDialog.dismiss()
-                        
-                        // 下载失败，提供重试选项
-                        AlertDialog.Builder(this@SlideshowActivity)
-                            .setTitle("下载失败")
-                            .setMessage("$statusText\n\n是否重试？")
-                            .setPositiveButton("重试") { dialog, _ ->
-                                dialog.dismiss()
-                                startDownload(updateChecker, downloadUrl, fileName)
-                            }
-                            .setNegativeButton("取消") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .show()
+                        Toast.makeText(
+                            this@SlideshowActivity,
+                            statusText,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return
                     }
                 }

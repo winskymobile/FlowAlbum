@@ -33,9 +33,12 @@ class UpdateChecker(private val context: Context) {
         // 按优先级排序：首先尝试直接访问，失败后依次尝试代理站
         private val PROXY_PREFIXES = listOf(
             "",                              // 直接访问（无代理）
-            "https://gh-proxy.com/",         // 代理站1
-            "https://cors.isteed.cc/",       // 代理站2
-            "https://ghfast.top/"            // 代理站3
+            "https://ghproxy.com/",          // 代理站1（常用稳定）
+            "https://gh-proxy.com/",         // 代理站2
+            "https://mirror.ghproxy.com/",   // 代理站3（ghproxy镜像）
+            "https://github.moeyy.xyz/",     // 代理站4
+            "https://cors.isteed.cc/",       // 代理站5
+            "https://ghfast.top/"            // 代理站6
         )
         
         // APK文件名正则表达式：FlowAlbum_v{版本号}_{时间戳}.apk
@@ -379,7 +382,10 @@ class UpdateChecker(private val context: Context) {
         return try {
             // 检查是否是代理站 URL
             val proxyPrefixes = listOf(
+                "https://ghproxy.com/",
                 "https://gh-proxy.com/",
+                "https://mirror.ghproxy.com/",
+                "https://github.moeyy.xyz/",
                 "https://cors.isteed.cc/",
                 "https://ghfast.top/"
             )
@@ -407,13 +413,11 @@ class UpdateChecker(private val context: Context) {
      */
     fun downloadApk(downloadUrl: String, fileName: String): Long {
         return try {
-            // 提取真实的 GitHub 下载地址（如果是代理站 URL）
-            val realUrl = extractRealUrl(downloadUrl)
-            
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             
-            // 使用真实的 GitHub URL 创建下载请求
-            val request = DownloadManager.Request(Uri.parse(realUrl)).apply {
+            // 直接使用传入的下载地址（已包含代理前缀）
+            // 不再提取真实URL，以便保持使用检测更新时成功的代理站
+            val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
                 // 设置标题和描述
                 setTitle("FlowAlbum 更新")
                 setDescription("正在下载 $fileName")

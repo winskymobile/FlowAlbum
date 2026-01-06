@@ -372,7 +372,7 @@ class UpdateChecker(private val context: Context) {
     
     /**
      * 使用系统 DownloadManager 下载 APK
-     * 使用专门的GitHub镜像站加速下载（兼容DownloadManager）
+     * 优先使用成功的API代理站，如果失败则尝试其他镜像
      * @param fileName APK 文件名
      * @return 下载任务 ID，如果失败返回 -1
      */
@@ -380,10 +380,16 @@ class UpdateChecker(private val context: Context) {
         return try {
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             
-            // 构建完整的下载URL，使用第一个镜像站
-            // 镜像格式：镜像前缀 + GitHub原始URL
+            // 构建完整的下载URL
+            // 优先使用API检测时成功的代理站，如果为空则使用专用下载镜像
             val githubUrl = GITHUB_RAW_PATH + fileName
-            val downloadUrl = DOWNLOAD_MIRRORS[0] + githubUrl
+            val downloadUrl = if (successfulProxyPrefix.isNotEmpty()) {
+                // 使用API检测成功的代理站
+                successfulProxyPrefix + githubUrl
+            } else {
+                // 使用专用下载镜像
+                DOWNLOAD_MIRRORS[0] + githubUrl
+            }
             
             val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
                 // 设置标题和描述

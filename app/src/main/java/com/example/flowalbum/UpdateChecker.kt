@@ -29,7 +29,11 @@ class UpdateChecker(private val context: Context) {
         private const val GITHUB_RAW_PATH =
             "https://github.com/winskymobile/FlowAlbum/raw/main/app/release/"
         
-        // Gitee备用下载地址
+        // Gitee API地址（用于更新检测备用）
+        private const val GITEE_API_PATH =
+            "https://gitee.com/api/v5/repos/winskymobile/FlowAlbum/contents/app/release"
+        
+        // Gitee Raw下载地址
         private const val GITEE_RAW_PATH =
             "https://gitee.com/winskymobile/FlowAlbum/raw/main/app/release/"
         
@@ -174,37 +178,47 @@ class UpdateChecker(private val context: Context) {
     }
 
     /**
-     * 从GitHub API获取APK文件列表（支持代理轮询）
+     * 从GitHub API获取APK文件列表（支持代理轮询和Gitee备用）
      */
     private fun fetchApkListFromGitHub(): List<ApkInfo> {
         val errors = mutableListOf<String>()
         
-        // 依次尝试直接访问和各个代理站
+        // 首先尝试GitHub（直接访问和各个代理站）
         for (proxyPrefix in PROXY_PREFIXES) {
             try {
                 val apiUrl = proxyPrefix + GITHUB_API_PATH
-                val result = tryFetchFromUrl(apiUrl, proxyPrefix)
+                val result = tryFetchFromGitHubUrl(apiUrl, proxyPrefix)
                 
                 // 成功获取，记录当前使用的代理前缀
                 successfulProxyPrefix = proxyPrefix
                 return result
                 
             } catch (e: Exception) {
-                val source = if (proxyPrefix.isEmpty()) "直接访问" else "代理站 $proxyPrefix"
+                val source = if (proxyPrefix.isEmpty()) "GitHub直接访问" else "GitHub代理站 $proxyPrefix"
                 errors.add("$source: ${e.message}")
                 // 继续尝试下一个代理
                 continue
             }
         }
         
+        // GitHub所有方式都失败，尝试使用Gitee备用API
+        try {
+            val result = tryFetchFromGiteeApi()
+            // 成功从Gitee获取，标记为使用Gitee
+            successfulProxyPrefix = "gitee"
+            return result
+        } catch (e: Exception) {
+            errors.add("Gitee备用API: ${e.message}")
+        }
+        
         // 所有尝试都失败
-        throw Exception("检测更新失败，网络无响应请稍后重试")
+        throw Exception("检测更新失败，网络无响应请稍后重试\n尝试的方式：${errors.joinToString("; ")}")
     }
     
     /**
-     * 尝试从指定URL获取APK列表
+     * 尝试从指定GitHub URL获取APK列表
      */
-    private fun tryFetchFromUrl(apiUrl: String, proxyPrefix: String): List<ApkInfo> {
+    private fun tryFetchFromGitHubUrl(apiUrl: String, proxyPrefix: String): List<ApkInfo> {
         val url = URL(apiUrl)
         val connection = url.openConnection() as HttpURLConnection
         
@@ -222,6 +236,32 @@ class UpdateChecker(private val context: Context) {
             
             val response = connection.inputStream.bufferedReader().use { it.readText() }
             return parseGitHubResponse(response, proxyPrefix)
+        } finally {
+            connection.disconnect()
+        }
+    }
+    
+    /**
+     * 尝试从Gitee API获取APK列表（备用方法）
+     */
+    private fun tryFetchFromGiteeApi(): List<ApkInfo> {
+        val url = URL(GITEE_API_PATH)
+        val connection = url.openConnection() as HttpURLConnection
+        
+        try {
+            connection.requestMethod = "GET"
+            connection.connectTimeout = CONNECT_TIMEOUT
+            connection.readTimeout = READ_TIMEOUT
+            connection.setRequestProperty("Accept", "application/json")
+            connection.setRequestProperty("User-Agent", "FlowAlbum-Android")
+            
+            val responseCode = connection.responseCode
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw Exception("HTTP错误: $responseCode")
+            }
+            
+            val response = connection.inputStream.bufferedReader().use { it.readText() }
+            return parseGiteeResponse(response)
         } finally {
             connection.disconnect()
         }
@@ -275,6 +315,52 @@ class UpdateChecker(private val context: Context) {
         return apkList
     }
 
+    /**
+     * 解析Gitee API响应
+     */
+    private fun parseGiteeResponse(response: String): List<ApkInfo> {
+        val apkList = mutableListOf<ApkInfo>()
+        
+        try {
+            val jsonArray = JSONArray(response)
+            
+            for (i in 0 until jsonArray.length()) {
+                val item = jsonArray.getJSONObject(i)
+                val name = item.getString("name")
+                val type = item.getString("type")
+                
+                // 只处理APK文件
+                if (type == "file" && name.endsWith(".apk")) {
+                    val matchResult = APK_PATTERN.find(name)
+                    if (matchResult != null) {
+                        val version = matchResult.groupValues[1]
+                        val timestamp = matchResult.groupValues[2]
+                        
+                        // 使用Gitee的download_url
+                        val downloadUrl = item.optString("download_url", "")
+                        val finalUrl = if (downloadUrl.isNotEmpty()) {
+                            downloadUrl
+                        } else {
+                            // 备用方案：手动构建Gitee下载URL
+                            GITEE_RAW_PATH + name
+                        }
+                        
+                        apkList.add(ApkInfo(
+                            fileName = name,
+                            version = version,
+                            timestamp = timestamp,
+                            downloadUrl = finalUrl
+                        ))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            throw Exception("解析Gitee响应失败: ${e.message}")
+        }
+        
+        return apkList
+    }
+    
     /**
      * 从APK列表中找到最新版本
      */
@@ -411,10 +497,15 @@ class UpdateChecker(private val context: Context) {
      */
     fun downloadApk(downloadUrl: String, fileName: String): Long {
         return try {
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            
+            // 如果更新检测时使用的是Gitee，直接使用Gitee下载
+            if (successfulProxyPrefix == "gitee") {
+                return tryDownloadFromUrl(downloadManager, downloadUrl, fileName, "Gitee")
+            }
+            
             // 提取真实的 GitHub 下载地址（如果是代理站 URL）
             val realUrl = extractRealUrl(downloadUrl)
-            
-            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             
             // 优先尝试 GitHub 直连下载
             val githubDownloadId = tryDownloadFromUrl(downloadManager, realUrl, fileName, "GitHub")

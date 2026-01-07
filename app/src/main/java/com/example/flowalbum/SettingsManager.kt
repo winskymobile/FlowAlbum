@@ -24,6 +24,8 @@ class SettingsManager(context: Context) {
         private const val KEY_FIT_SCREEN = "fit_screen"
         private const val KEY_COLOR_SATURATION = "color_saturation"
         private const val KEY_THEME_COLOR = "theme_color"
+        private const val KEY_SKIPPED_VERSION = "skipped_update_version"
+        private const val KEY_AUTO_CHECK_UPDATE = "auto_check_update"
         
         // 默认值
         const val DEFAULT_INTERVAL = 3000L // 默认3秒切换
@@ -224,5 +226,54 @@ class SettingsManager(context: Context) {
             主题颜色: ${getThemeColor()}
             文件夹路径: ${getFolderPath() ?: "未设置"}
         """.trimIndent()
+    }
+
+    /**
+     * 获取跳过的版本号
+     * 返回格式: "version_timestamp" 例如 "1.0.4_20260107103259"
+     */
+    fun getSkippedVersion(): String? {
+        return prefs.getString(KEY_SKIPPED_VERSION, null)
+    }
+
+    /**
+     * 设置跳过的版本号
+     * @param version 版本号，格式: "version_timestamp" 例如 "1.0.4_20260107103259"
+     */
+    fun setSkippedVersion(version: String?) {
+        prefs.edit().putString(KEY_SKIPPED_VERSION, version).apply()
+    }
+
+    /**
+     * 清除跳过的版本号（当用户选择更新或有新版本时调用）
+     */
+    fun clearSkippedVersion() {
+        prefs.edit().remove(KEY_SKIPPED_VERSION).apply()
+    }
+
+    /**
+     * 检查指定版本是否是已跳过的版本
+     * @param version 版本号
+     * @param timestamp 时间戳
+     * @return true表示该版本已被用户跳过
+     */
+    fun isVersionSkipped(version: String, timestamp: String): Boolean {
+        val skippedVersion = getSkippedVersion() ?: return false
+        val currentVersionKey = "${version}_${timestamp}"
+        return skippedVersion == currentVersionKey
+    }
+
+    /**
+     * 是否启用自动检测更新（默认启用）
+     */
+    fun isAutoCheckUpdate(): Boolean {
+        return prefs.getBoolean(KEY_AUTO_CHECK_UPDATE, true)
+    }
+
+    /**
+     * 设置是否启用自动检测更新
+     */
+    fun setAutoCheckUpdate(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_AUTO_CHECK_UPDATE, enabled).apply()
     }
 }

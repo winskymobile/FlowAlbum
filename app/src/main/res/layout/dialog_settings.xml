@@ -1120,6 +1120,37 @@
                     android:lineSpacingMultiplier="1.2"
                     android:layout_marginBottom="32dp" />
 
+                <!-- 自动检测更新开关 -->
+                <LinearLayout
+                    android:id="@+id/layoutAutoCheckUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="@drawable/folder_item_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:clickable="true"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/auto_check_update"
+                        android:textSize="16sp"
+                        android:textColor="@color/dialog_text" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchAutoCheckUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/FlowAlbum.Switch"
+                        android:focusable="false"
+                        android:clickable="false" />
+                </LinearLayout>
+
                 <!-- 检测更新按钮 -->
                 <Button
                     android:id="@+id/btnCheckUpdate"

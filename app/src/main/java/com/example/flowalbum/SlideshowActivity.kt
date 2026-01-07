@@ -92,6 +92,9 @@ class SlideshowActivity : AppCompatActivity() {
         
         // 应用保存的主题色
         applyThemeColor(settingsManager.getThemeColor())
+        
+        // 自动检测更新（如果开关开启）
+        checkForUpdateOnStartup()
     }
 
     /**
@@ -863,7 +866,12 @@ class SlideshowActivity : AppCompatActivity() {
         
         // 获取关于页面控件
         val textVersion = dialogView.findViewById<TextView>(R.id.textVersion)
+        val layoutAutoCheckUpdate = dialogView.findViewById<LinearLayout>(R.id.layoutAutoCheckUpdate)
+        val switchAutoCheckUpdate = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.switchAutoCheckUpdate)
         val btnCheckUpdate = dialogView.findViewById<Button>(R.id.btnCheckUpdate)
+        
+        // 设置自动检测更新开关状态
+        switchAutoCheckUpdate.isChecked = settingsManager.isAutoCheckUpdate()
         
         // 设置版本号
         try {
@@ -1149,6 +1157,16 @@ class SlideshowActivity : AppCompatActivity() {
             applyScaleType()
             // 重新显示当前图片以应用新的缩放模式
             displayCurrentPhoto()
+        }
+        
+        // 自动检测更新开关 - 点击整个容器切换状态
+        layoutAutoCheckUpdate.setOnClickListener {
+            switchAutoCheckUpdate.isChecked = !switchAutoCheckUpdate.isChecked
+        }
+        
+        // 自动检测更新开关监听 - 实时保存
+        switchAutoCheckUpdate.setOnCheckedChangeListener { _, isChecked ->
+            settingsManager.setAutoCheckUpdate(isChecked)
         }
 
         // 本地图片按钮
@@ -1870,7 +1888,7 @@ class SlideshowActivity : AppCompatActivity() {
                 }
                 // 开关容器（点击区域）
                 R.id.layoutAutoPlay, R.id.layoutHighQuality,
-                R.id.layoutHardwareAccel, R.id.layoutFitScreen -> {
+                R.id.layoutHardwareAccel, R.id.layoutFitScreen, R.id.layoutAutoCheckUpdate -> {
                     if (child is LinearLayout) {
                         // 创建聚焦时的边框效果
                         val drawable = android.graphics.drawable.StateListDrawable()
@@ -1893,7 +1911,7 @@ class SlideshowActivity : AppCompatActivity() {
                 }
                 // Switch 开关
                 R.id.switchAutoPlay, R.id.switchHighQuality,
-                R.id.switchHardwareAccel, R.id.switchFitScreen -> {
+                R.id.switchHardwareAccel, R.id.switchFitScreen, R.id.switchAutoCheckUpdate -> {
                     if (child is androidx.appcompat.widget.SwitchCompat) {
                         // 更新 Switch 的主题色
                         child.thumbTintList = android.content.res.ColorStateList(
@@ -2018,6 +2036,86 @@ class SlideshowActivity : AppCompatActivity() {
                 updateDividerColors(child, color)
             }
         }
+    }
+    
+    /**
+     * 启动时自动检测更新（根据设置开关）
+     */
+    private fun checkForUpdateOnStartup() {
+        // 检查是否开启自动检测更新
+        if (!settingsManager.isAutoCheckUpdate()) {
+            return
+        }
+        
+        lifecycleScope.launch {
+            try {
+                val updateChecker = UpdateChecker(this@SlideshowActivity)
+                val updateInfo = updateChecker.checkForUpdate()
+                
+                // 如果有更新且不是网络错误
+                if (updateInfo.hasUpdate && updateInfo.errorMessage == null) {
+                    // 检查是否是已跳过的版本
+                    if (!settingsManager.isVersionSkipped(
+                            updateInfo.latestVersion,
+                            updateInfo.latestTimestamp
+                        )) {
+                        // 显示更新提示对话框
+                        showUpdateDialog(updateInfo, updateChecker)
+                    }
+                }
+                // 如果没有更新或有错误，不显示任何消息（静默检测）
+            } catch (e: Exception) {
+                // 静默处理异常，不显示任何消息
+            }
+        }
+    }
+
+    /**
+     * 显示更新提示对话框
+     * 支持三个选项：下载更新、跳过此版本、稍后再说
+     */
+    private fun showUpdateDialog(
+        updateInfo: UpdateChecker.UpdateInfo,
+        updateChecker: UpdateChecker
+    ) {
+        val formattedLatestTime = updateChecker.formatTimestamp(updateInfo.latestTimestamp)
+        val formattedCurrentTime = updateChecker.formatTimestamp(updateInfo.currentTimestamp)
+        
+        val message = getString(
+            R.string.update_version_info,
+            updateInfo.latestVersion,
+            formattedLatestTime,
+            updateInfo.currentVersion,
+            formattedCurrentTime
+        )
+        
+        AlertDialog.Builder(this)
+            .setTitle(R.string.update_available)
+            .setMessage(message)
+            .setPositiveButton(R.string.update_download) { dialog, _ ->
+                // 清除跳过版本标记（用户选择更新）
+                settingsManager.clearSkippedVersion()
+                // 开始下载
+                startDownload(updateChecker, updateInfo.downloadUrl, updateInfo.fileName)
+                dialog.dismiss()
+            }
+            .setNeutralButton(R.string.skip_this_version) { dialog, _ ->
+                // 保存跳过的版本号
+                val versionKey = "${updateInfo.latestVersion}_${updateInfo.latestTimestamp}"
+                settingsManager.setSkippedVersion(versionKey)
+                Toast.makeText(
+                    this,
+                    "已跳过版本 ${updateInfo.latestVersion}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.update_later) { dialog, _ ->
+                // 不保存跳过状态，下次启动继续提示
+                dialog.dismiss()
+            }
+            .setCancelable(true)
+            .show()
     }
     
 }

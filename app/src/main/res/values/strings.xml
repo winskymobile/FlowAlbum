@@ -118,6 +118,8 @@
     <string name="version_info">版本 %s</string>
     <string name="copyright">版权信息</string>
     <string name="copyright_info">© 2025 Vincent.J 保留所有权利</string>
+    <string name="auto_check_update">启动时自动检测更新</string>
+    <string name="auto_check_update_desc">程序启动时自动检查是否有新版本</string>
     <string name="check_update">检测更新</string>
     <string name="checking_update">正在检测更新…</string>
     <string name="no_update">已是最新版本</string>
@@ -125,6 +127,7 @@
     <string name="update_version_info">新版本: v%1$s_%2$s\n\n当前版本: v%3$s_%4$s</string>
     <string name="update_download">下载更新</string>
     <string name="update_later">稍后再说</string>
+    <string name="skip_this_version">跳过此版本</string>
     <string name="update_check_failed">检测更新失败</string>
     <string name="update_network_error">网络连接失败，请检查网络设置</string>
     <string name="current_version_info">当前版本: v%1$s_%2$s</string>
